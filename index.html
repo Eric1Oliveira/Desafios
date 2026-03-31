@@ -1,0 +1,1030 @@
+<!doctype html>
+<html lang="pt-BR" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arena de Desafios</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&amp;family=Space+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+  <style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body { font-family: 'Outfit', sans-serif; }
+  .mono { font-family: 'Space Mono', monospace; }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 30px rgba(255,107,53,0.4), inset 0 0 20px rgba(255,107,53,0.1); }
+    50% { box-shadow: 0 0 60px rgba(255,107,53,0.8), inset 0 0 30px rgba(255,107,53,0.2); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+  }
+  @keyframes crown-rotate {
+    0%, 100% { transform: rotateY(0deg) rotateZ(5deg) scale(1); }
+    50% { transform: rotateY(10deg) rotateZ(-5deg) scale(1.15); }
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  .anim-slide { animation: slideUp 0.5s ease forwards; }
+  .anim-delay-1 { animation-delay: 0.1s; opacity: 0; }
+  .pulse-winner { animation: pulse-glow 2s ease infinite; }
+  .shake-win { animation: shake 0.3s ease; }
+  .crown { animation: crown-rotate 1.5s ease-in-out infinite; }
+
+  .progress-bar { transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+  .card-hover { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  .card-hover:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    padding: 12px 24px; border-radius: 12px; z-index: 1000;
+    animation: slideUp 0.3s ease forwards;
+    font-weight: 600; max-width: 90vw; text-align: center;
+  }
+
+  .spinner {
+    width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite;
+    display: inline-block; vertical-align: middle; margin-right: 8px;
+  }
+
+  .loading-overlay {
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px; color: #999;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+  </style>
+  <script>
+  const SUPABASE_URL = 'https://jydmnydlfynktydngjmj.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5ZG1ueWRsZnlua3R5ZG5nam1qIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ5ODcxMjgsImV4cCI6MjA5MDU2MzEyOH0.i-kAaRHtsxy5LdSkjyuKr1uOignAUX14UmyUkPOz2FE';
+  supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  </script>
+ </head>
+ <body class="h-full">
+  <div id="app" class="h-full w-full overflow-auto" style="background: #0a0a0f;">
+   <!-- LOGIN SCREEN -->
+   <div id="login-screen" class="h-full w-full flex items-center justify-center p-4" style="background: linear-gradient(135deg, #0a0a0f 0%, #1a0a2e 50%, #0a0a0f 100%);">
+    <div class="w-full max-w-md">
+     <div class="text-center mb-8 anim-slide">
+      <div class="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-4" style="background: linear-gradient(135deg, #ff6b35, #ff3366);">
+       <span class="text-4xl">⚔️</span>
+      </div>
+      <h1 class="text-3xl font-900 text-white mb-2">ARENA DE DESAFIOS</h1>
+      <p class="text-gray-400 text-sm">Entre na competição. Vença desafios. Domine o ranking.</p>
+     </div>
+     <div class="rounded-2xl p-6 anim-slide anim-delay-1" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(10px);">
+      <div id="login-form-area">
+       <label class="block text-gray-300 text-sm font-600 mb-2">Seu Nick</label>
+       <input id="login-user" type="text" placeholder="Ex: João" maxlength="20" class="w-full px-4 py-3 rounded-xl text-white text-lg font-600 outline-none mb-4" style="background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.1);" onfocus="this.style.borderColor='#ff6b35'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+       <label class="block text-gray-300 text-sm font-600 mb-2">Senha</label>
+       <input id="login-pass" type="password" placeholder="Digite sua senha" maxlength="20" class="w-full px-4 py-3 rounded-xl text-white text-lg font-600 outline-none mb-4" style="background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.1);" onfocus="this.style.borderColor='#ff6b35'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+       <button onclick="handleLogin()" id="login-btn" class="w-full py-3 rounded-xl text-white font-700 text-lg transition-all" style="background: linear-gradient(135deg, #ff6b35, #ff3366);">ENTRAR</button>
+       <p id="login-error" class="text-red-400 text-xs mt-3 text-center hidden"></p>
+      </div>
+      <div id="signup-form-area" class="hidden">
+       <label class="block text-gray-300 text-sm font-600 mb-2">Criar Nick</label>
+       <input id="signup-user" type="text" placeholder="Seu apelido" maxlength="20" class="w-full px-4 py-3 rounded-xl text-white text-lg font-600 outline-none mb-3" style="background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.1);" onfocus="this.style.borderColor='#ff6b35'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+       <label class="block text-gray-300 text-sm font-600 mb-2">Criar Senha</label>
+       <input id="signup-pass" type="password" placeholder="Mínimo 4 caracteres" maxlength="20" class="w-full px-4 py-3 rounded-xl text-white text-lg font-600 outline-none mb-4" style="background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.1);" onfocus="this.style.borderColor='#ff6b35'" onblur="this.style.borderColor='rgba(255,255,255,0.1)'">
+       <button onclick="handleSignup()" id="signup-btn" class="w-full py-3 rounded-xl text-white font-700 text-lg transition-all" style="background: linear-gradient(135deg, #38bdf8, #818cf8);">CRIAR CONTA</button>
+       <p id="signup-error" class="text-red-400 text-xs mt-3 text-center hidden"></p>
+      </div>
+      <div class="mt-4 text-center">
+       <p id="toggle-text" class="text-gray-500 text-xs">Não tem conta? <button onclick="toggleAuthMode()" class="text-blue-400 hover:text-blue-300 font-600 transition-all">Cadastre-se</button></p>
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <!-- CHALLENGE HUB -->
+   <div id="hub-screen" class="h-full w-full hidden overflow-auto" style="background: linear-gradient(180deg, #0a0a0f 0%, #1a0d2e 35%, #0d0d1a 65%, #0a0a0f 100%);">
+    <div class="max-w-6xl mx-auto p-4 pb-24">
+     <header class="flex items-center justify-between mb-8 pt-2">
+      <div>
+       <h1 class="text-2xl font-900 text-white">ARENA DE DESAFIOS</h1>
+       <p class="text-sm text-gray-400" id="hub-player"></p>
+      </div>
+      <button onclick="handleLogout()" class="px-4 py-2 rounded-xl text-sm font-600 text-gray-400 transition-all" style="background: rgba(255,255,255,0.05);"><i data-lucide="log-out" style="width:16px;height:16px;display:inline;vertical-align:middle;"></i> Sair</button>
+     </header>
+
+     <!-- Meu Histórico -->
+     <div class="rounded-2xl p-5 mb-6" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+      <h3 class="text-white font-700 mb-4 flex items-center gap-2"><span class="text-xl">📊</span> Meu Histórico</h3>
+      <div id="my-history" class="loading-overlay"><div class="spinner"></div> Carregando...</div>
+     </div>
+
+     <!-- Global Ranking -->
+     <div class="rounded-2xl p-5 mb-6" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+      <h3 class="text-white font-700 mb-4 flex items-center gap-2"><span class="text-xl">👑</span> Ranking Global</h3>
+      <div id="global-ranking" class="loading-overlay"><div class="spinner"></div> Carregando...</div>
+     </div>
+
+     <!-- Create Challenge -->
+     <div class="rounded-2xl p-5 mb-6" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+      <h3 class="text-white font-700 mb-4 flex items-center gap-2"><i data-lucide="plus-circle" style="width:20px;height:20px;color:#ff6b35;"></i> Criar Desafio</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+       <div>
+        <label class="block text-gray-400 text-xs mb-1 font-600">Nome do Desafio</label>
+        <input id="create-name" type="text" placeholder="Ex: Desafio Freestyle" maxlength="40" class="w-full px-3 py-2.5 rounded-xl text-white text-sm outline-none" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);">
+       </div>
+       <div>
+        <label class="block text-gray-400 text-xs mb-1 font-600">Meta (R$)</label>
+        <input id="create-goal" type="number" min="100" step="100" placeholder="1000" class="w-full px-3 py-2.5 rounded-xl text-white text-sm outline-none" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);">
+       </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+       <div>
+        <label class="block text-gray-400 text-xs mb-1 font-600">Data de Início</label>
+        <input id="create-start" type="date" class="w-full px-3 py-2.5 rounded-xl text-white text-sm outline-none" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);">
+       </div>
+       <div>
+        <label class="block text-gray-400 text-xs mb-1 font-600">Data de Término</label>
+        <input id="create-end" type="date" class="w-full px-3 py-2.5 rounded-xl text-white text-sm outline-none" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);">
+       </div>
+      </div>
+      <button onclick="createChallenge()" id="create-btn" class="w-full py-3 rounded-xl text-white font-700 transition-all" style="background: linear-gradient(135deg, #ff6b35, #ff3366);">CRIAR DESAFIO</button>
+      <p id="create-error" class="text-red-400 text-xs mt-2 hidden"></p>
+     </div>
+
+     <!-- Available Challenges -->
+     <div class="rounded-2xl p-5" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+      <h3 class="text-white font-700 mb-4 flex items-center gap-2"><i data-lucide="zap" style="width:20px;height:20px;color:#38bdf8;"></i> Desafios</h3>
+      <div id="challenges-list" class="space-y-3"></div>
+      <p id="challenges-empty" class="text-gray-500 text-sm text-center py-8 hidden">Nenhum desafio ainda. Crie um e convide alguém!</p>
+      <div id="challenges-loading" class="loading-overlay"><div class="spinner"></div> Carregando...</div>
+     </div>
+    </div>
+   </div>
+
+   <!-- CHALLENGE SCREEN -->
+   <div id="challenge-screen" class="h-full w-full hidden flex flex-col overflow-auto" style="background: linear-gradient(180deg, #1a3a5c 0%, #0d0d1a 50%, #0a0a0f 100%);">
+    <div class="w-full p-4 sm:p-6 pb-24 flex-1 max-w-4xl mx-auto">
+     <header class="flex items-center justify-between mb-4 pt-2">
+      <div>
+       <button onclick="backToHub()" class="px-3 py-2 rounded-lg text-sm font-600 text-gray-400 mb-2 transition-all" style="background: rgba(255,255,255,0.05);"><i data-lucide="arrow-left" style="width:16px;height:16px;display:inline;vertical-align:middle;margin-right:4px;"></i> Voltar</button>
+       <h1 id="challenge-name" class="text-xl sm:text-2xl font-900 text-white mb-1">Desafio</h1>
+       <p id="challenge-status" class="text-sm text-gray-400"></p>
+      </div>
+      <div id="challenge-badge" class="text-center p-3 rounded-xl" style="background: rgba(255,255,255,0.05);">
+       <p class="text-xs text-gray-400 mb-1">Status</p>
+       <p id="badge-text" class="text-white font-700">ATIVO</p>
+      </div>
+     </header>
+
+     <div id="goal-section" class="rounded-2xl p-4 mb-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+      <div class="flex justify-between items-center">
+       <span class="text-gray-400 text-sm font-600">META</span>
+       <span id="goal-text" class="mono text-sm font-700" style="color: #ff6b35;">R$ 1.000,00</span>
+      </div>
+     </div>
+
+     <div id="deadline-section" class="rounded-2xl p-4 mb-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+      <div class="flex justify-between items-center flex-wrap gap-2">
+       <div>
+        <p class="text-gray-400 text-xs font-600 mb-1">PRAZO</p>
+        <p id="deadline-text" class="text-white font-700 text-sm sm:text-base"></p>
+       </div>
+       <div class="text-right">
+        <p class="text-gray-400 text-xs font-600 mb-1">TEMPO RESTANTE</p>
+        <p id="time-left" class="mono text-base sm:text-lg font-700" style="color: #38bdf8;"></p>
+       </div>
+      </div>
+     </div>
+
+     <div id="players-container" class="mb-4"></div>
+
+     <!-- Add Transaction (hidden when finished) -->
+     <div id="txn-form-section" class="rounded-2xl p-5 mb-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+      <h3 class="text-white font-700 mb-4 flex items-center gap-2"><i data-lucide="plus-circle" style="width:20px;height:20px;color:#ff6b35;"></i> Novo Registro</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+       <div>
+        <label class="block text-gray-400 text-xs mb-1 font-600">Tipo</label>
+        <select id="txn-type" class="w-full px-3 py-2.5 rounded-xl text-white text-sm outline-none" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);">
+         <option value="entrada" style="background:#1a1a2e;">💰 Entrada</option>
+         <option value="saida" style="background:#1a1a2e;">💸 Saída</option>
+        </select>
+       </div>
+       <div>
+        <label class="block text-gray-400 text-xs mb-1 font-600">Valor (R$)</label>
+        <input id="txn-amount" type="number" min="0.01" step="0.01" placeholder="0,00" class="w-full px-3 py-2.5 rounded-xl text-white text-sm outline-none" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);">
+       </div>
+      </div>
+      <div class="mb-3">
+       <label class="block text-gray-400 text-xs mb-1 font-600">Descrição</label>
+       <input id="txn-desc" type="text" placeholder="Ex: Freelance, Venda, etc." maxlength="50" class="w-full px-3 py-2.5 rounded-xl text-white text-sm outline-none" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1);">
+      </div>
+      <button onclick="addTransaction()" id="add-btn" class="w-full py-3 rounded-xl text-white font-700 transition-all" style="background: linear-gradient(135deg, #ff6b35, #ff3366);">ADICIONAR</button>
+      <p id="add-error" class="text-red-400 text-xs mt-2 hidden"></p>
+     </div>
+
+     <!-- Transaction History -->
+     <div class="rounded-2xl p-5 mb-4" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+      <h3 class="text-white font-700 mb-4 flex items-center gap-2"><i data-lucide="list" style="width:20px;height:20px;color:#38bdf8;"></i> Histórico</h3>
+      <div id="txn-list" class="space-y-2" style="max-height: 300px; overflow-y: auto; min-height: 60px;"></div>
+      <p id="txn-empty" class="text-gray-500 text-sm text-center py-8">Nenhum registro ainda. Comece adicionando!</p>
+     </div>
+
+     <!-- Finish Challenge -->
+     <div id="finish-section" class="rounded-2xl p-5" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);">
+      <h3 class="text-white font-700 mb-4">Finalizar Desafio</h3>
+      <button onclick="finishChallenge()" id="finish-btn" class="w-full py-3 rounded-xl text-white font-700 transition-all" style="background: linear-gradient(135deg, #38bdf8, #818cf8);">FINALIZAR DESAFIO</button>
+      <p class="text-gray-500 text-xs mt-2">Disponível quando o prazo expirar.</p>
+      <p id="finish-error" class="text-red-400 text-xs mt-2 hidden"></p>
+     </div>
+    </div>
+   </div>
+
+   <!-- Delete Confirm -->
+   <div id="delete-overlay" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4" style="background: rgba(0,0,0,0.7);">
+    <div class="rounded-2xl p-6 max-w-sm w-full" style="background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1);">
+     <p class="text-white font-700 text-lg mb-2">Apagar registro?</p>
+     <p class="text-gray-400 text-sm mb-6">Essa ação não pode ser desfeita.</p>
+     <div class="flex gap-3">
+      <button onclick="cancelDelete()" class="flex-1 py-2.5 rounded-xl text-gray-300 font-600 text-sm" style="background: rgba(255,255,255,0.08);">Cancelar</button>
+      <button onclick="confirmDelete()" id="confirm-del-btn" class="flex-1 py-2.5 rounded-xl text-white font-600 text-sm" style="background: #ef4444;">Apagar</button>
+     </div>
+    </div>
+   </div>
+
+   <!-- Join Confirm -->
+   <div id="join-overlay" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4" style="background: rgba(0,0,0,0.7);">
+    <div class="rounded-2xl p-6 max-w-sm w-full" style="background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1);">
+     <p class="text-white font-700 text-lg mb-2">Entrar no desafio?</p>
+     <p id="join-details" class="text-gray-400 text-sm mb-6"></p>
+     <div class="flex gap-3">
+      <button onclick="cancelJoin()" class="flex-1 py-2.5 rounded-xl text-gray-300 font-600 text-sm" style="background: rgba(255,255,255,0.08);">Cancelar</button>
+      <button onclick="confirmJoin()" id="confirm-join-btn" class="flex-1 py-2.5 rounded-xl text-white font-600 text-sm" style="background: linear-gradient(135deg, #ff6b35, #ff3366);">Entrar</button>
+     </div>
+    </div>
+   </div>
+
+   <!-- Victory Modal -->
+   <div id="victory-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4" style="background: rgba(0,0,0,0.9);">
+    <div class="rounded-2xl p-8 max-w-md w-full text-center" style="background: linear-gradient(135deg, rgba(255,107,53,0.2), rgba(255,107,53,0.05)); border: 2px solid rgba(255,107,53,0.5);">
+     <div class="text-6xl mb-4 shake-win">🏆</div>
+     <h2 class="text-3xl font-900 text-white mb-2" id="victory-title">VITÓRIA!</h2>
+     <p id="victory-msg" class="text-gray-300 text-lg mb-6"></p>
+     <button onclick="closeVictory()" class="w-full py-3 rounded-xl text-white font-700 transition-all" style="background: linear-gradient(135deg, #ff6b35, #ff3366);">VOLTAR À ARENA</button>
+    </div>
+   </div>
+  </div>
+
+  <script>
+  // === STATE ===
+  let currentPlayer = null;
+  let currentChallenge = null;
+  let currentPlayerSlot = null;
+  let deleteTarget = null;
+  let joinTarget = null;
+  let isSignupMode = false;
+  let users = {};
+  let realtimeChannel = null;
+
+  // === SECURITY: SHA-256 hash ===
+  async function secureHash(str) {
+    const data = new TextEncoder().encode(str);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // === XSS: sanitize text before inserting into HTML ===
+  function esc(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = String(str);
+    return div.innerHTML;
+  }
+
+  function formatMoney(val) {
+    return Math.abs(val).toFixed(2).replace('.', ',');
+  }
+
+  // === INIT ===
+  async function loadUsers() {
+    const { data, error } = await supabase.from('users').select('username, password_hash');
+    if (!error && data) {
+      users = {};
+      data.forEach(u => { users[u.username] = u.password_hash; });
+    }
+  }
+  loadUsers();
+
+  // === AUTH ===
+  function toggleAuthMode() {
+    isSignupMode = !isSignupMode;
+    document.getElementById('login-form-area').classList.toggle('hidden', isSignupMode);
+    document.getElementById('signup-form-area').classList.toggle('hidden', !isSignupMode);
+    document.getElementById('toggle-text').innerHTML = isSignupMode
+      ? 'Já tem conta? <button onclick="toggleAuthMode()" class="text-blue-400 hover:text-blue-300 font-600 transition-all">Faça login</button>'
+      : 'Não tem conta? <button onclick="toggleAuthMode()" class="text-blue-400 hover:text-blue-300 font-600 transition-all">Cadastre-se</button>';
+    document.getElementById('login-error').classList.add('hidden');
+    document.getElementById('signup-error').classList.add('hidden');
+  }
+
+  async function handleSignup() {
+    const user = document.getElementById('signup-user').value.trim();
+    const pass = document.getElementById('signup-pass').value;
+    const errEl = document.getElementById('signup-error');
+    errEl.classList.add('hidden');
+
+    if (!user || user.length < 3) { errEl.textContent = 'Usuário deve ter 3+ caracteres.'; errEl.classList.remove('hidden'); return; }
+    if (!pass || pass.length < 4) { errEl.textContent = 'Senha deve ter 4+ caracteres.'; errEl.classList.remove('hidden'); return; }
+    if (users[user]) { errEl.textContent = 'Este usuário já existe!'; errEl.classList.remove('hidden'); return; }
+
+    const btn = document.getElementById('signup-btn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>CRIANDO...'; btn.style.opacity = '0.6';
+
+    const hash = await secureHash(pass);
+    const { error } = await supabase.from('users').insert([{ username: user, password_hash: hash }]);
+
+    btn.disabled = false; btn.textContent = 'CRIAR CONTA'; btn.style.opacity = '1';
+
+    if (!error) {
+      users[user] = hash;
+      currentPlayer = user;
+      document.getElementById('login-screen').classList.add('hidden');
+      document.getElementById('hub-screen').classList.remove('hidden');
+      renderHub();
+      lucide.createIcons();
+    } else {
+      errEl.textContent = 'Erro ao criar conta. Tente novamente.';
+      errEl.classList.remove('hidden');
+    }
+  }
+
+  async function handleLogin() {
+    const user = document.getElementById('login-user').value.trim();
+    const pass = document.getElementById('login-pass').value;
+    const errEl = document.getElementById('login-error');
+    errEl.classList.add('hidden');
+
+    if (!user || !pass) { errEl.textContent = 'Preencha usuário e senha.'; errEl.classList.remove('hidden'); return; }
+
+    const btn = document.getElementById('login-btn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>ENTRANDO...'; btn.style.opacity = '0.6';
+
+    const hash = await secureHash(pass);
+
+    btn.disabled = false; btn.textContent = 'ENTRAR'; btn.style.opacity = '1';
+
+    if (!users[user] || users[user] !== hash) {
+      errEl.textContent = 'Usuário ou senha incorretos.';
+      errEl.classList.remove('hidden');
+      return;
+    }
+
+    currentPlayer = user;
+    document.getElementById('login-screen').classList.add('hidden');
+    document.getElementById('hub-screen').classList.remove('hidden');
+    renderHub();
+    lucide.createIcons();
+  }
+
+  document.getElementById('login-pass').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleLogin(); } });
+  document.getElementById('signup-pass').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleSignup(); } });
+
+  function handleLogout() {
+    unsubscribeRealtime();
+    currentPlayer = null; currentChallenge = null; currentPlayerSlot = null;
+    document.getElementById('hub-screen').classList.add('hidden');
+    document.getElementById('challenge-screen').classList.add('hidden');
+    document.getElementById('login-screen').classList.remove('hidden');
+    document.getElementById('login-user').value = '';
+    document.getElementById('login-pass').value = '';
+    isSignupMode = false;
+  }
+
+  // === REALTIME ===
+  function subscribeRealtime() {
+    unsubscribeRealtime();
+    realtimeChannel = supabase.channel('challenge-updates')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions' }, (payload) => {
+        if (currentChallenge && payload.new && payload.new.challenge_id === currentChallenge && payload.new.username !== currentPlayer) {
+          showToast('⚡ Seu oponente adicionou um registro!', '#38bdf8');
+          renderChallenge();
+        }
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'challenges' }, () => {
+        if (currentChallenge) renderChallenge();
+        else renderHub();
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'challenge_players' }, () => {
+        if (currentChallenge) renderChallenge();
+        else renderHub();
+      })
+      .subscribe();
+  }
+
+  function unsubscribeRealtime() {
+    if (realtimeChannel) {
+      supabase.removeChannel(realtimeChannel);
+      realtimeChannel = null;
+    }
+  }
+
+  // === HUB ===
+  async function renderHub() {
+    subscribeRealtime();
+    document.getElementById('hub-player').textContent = '👤 ' + esc(currentPlayer);
+    renderMyHistory();
+    renderGlobalRanking();
+    renderChallenges();
+  }
+
+  async function renderMyHistory() {
+    const el = document.getElementById('my-history');
+    el.innerHTML = '<div class="loading-overlay"><div class="spinner"></div> Carregando...</div>';
+
+    const { data: challenges } = await supabase.from('challenges').select('*');
+    const { data: allPlayers } = await supabase.from('challenge_players').select('*');
+    const { data: transactions } = await supabase.from('transactions').select('*');
+
+    const myChallenges = (allPlayers || []).filter(p => p.username === currentPlayer);
+    let wins = 0, losses = 0, totalBalance = 0;
+
+    myChallenges.forEach(mp => {
+      const c = (challenges || []).find(ch => ch.id === mp.challenge_id);
+      if (!c) return;
+      if (c.status === 'finished') {
+        if (c.winner === currentPlayer) wins++;
+        else if (c.winner) losses++;
+      }
+      const myTxns = (transactions || []).filter(t => t.challenge_id === mp.challenge_id && t.player_slot === mp.player_slot);
+      myTxns.forEach(t => {
+        if (t.type === 'entrada') totalBalance += t.amount;
+        else totalBalance -= t.amount;
+      });
+    });
+
+    el.innerHTML = `
+      <div class="grid grid-cols-3 gap-3">
+        <div class="text-center p-3 rounded-xl" style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);">
+          <p class="text-2xl font-900" style="color: #22c55e;">${wins}</p>
+          <p class="text-xs text-gray-400 font-600">Vitórias</p>
+        </div>
+        <div class="text-center p-3 rounded-xl" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);">
+          <p class="text-2xl font-900" style="color: #ef4444;">${losses}</p>
+          <p class="text-xs text-gray-400 font-600">Derrotas</p>
+        </div>
+        <div class="text-center p-3 rounded-xl" style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2);">
+          <p class="text-lg font-900 mono" style="color: ${totalBalance >= 0 ? '#22c55e' : '#ef4444'};">${totalBalance >= 0 ? '+' : '-'}R$${formatMoney(totalBalance)}</p>
+          <p class="text-xs text-gray-400 font-600">Saldo Total</p>
+        </div>
+      </div>
+    `;
+  }
+
+  async function renderGlobalRanking() {
+    const rankEl = document.getElementById('global-ranking');
+    rankEl.innerHTML = '<div class="loading-overlay"><div class="spinner"></div> Carregando...</div>';
+
+    const { data: transactions } = await supabase.from('transactions').select('*');
+    const { data: challenges } = await supabase.from('challenges').select('*');
+
+    const rankings = {};
+    (transactions || []).forEach(d => {
+      if (d.type === 'entrada' || d.type === 'saida') {
+        if (!rankings[d.username]) rankings[d.username] = { wins: 0, total: 0, balance: 0 };
+        rankings[d.username].total += 1;
+        if (d.type === 'entrada') rankings[d.username].balance += d.amount;
+        else rankings[d.username].balance -= d.amount;
+      }
+    });
+    (challenges || []).forEach(c => {
+      if (c.winner) {
+        if (!rankings[c.winner]) rankings[c.winner] = { wins: 0, total: 0, balance: 0 };
+        rankings[c.winner].wins += 1;
+      }
+    });
+
+    const ranked = Object.entries(rankings)
+      .map(([name, stats]) => ({ name, ...stats }))
+      .sort((a, b) => b.wins - a.wins || b.balance - a.balance)
+      .slice(0, 5);
+
+    if (ranked.length === 0) {
+      rankEl.innerHTML = '<p class="text-gray-500 text-sm text-center py-4">Nenhum jogador no ranking ainda.</p>';
+      return;
+    }
+
+    rankEl.innerHTML = '<div class="space-y-2">' + ranked.map((p, i) => `
+      <div class="flex items-center justify-between p-3 rounded-xl" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);">
+        <div class="flex items-center gap-3">
+          <span class="text-xl font-900" style="color: ${i === 0 ? '#ff6b35' : i === 1 ? '#c0c0c0' : i === 2 ? '#cd7f32' : '#999'};">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '#'+(i+1)}</span>
+          <div>
+            <p class="text-white font-700">${esc(p.name)}</p>
+            <p class="text-xs text-gray-500">${p.wins} vitória${p.wins !== 1 ? 's' : ''}</p>
+          </div>
+        </div>
+        <p class="mono text-sm font-700" style="color: ${p.balance >= 0 ? '#22c55e' : '#ef4444'};">${p.balance >= 0 ? '+' : '-'}R$ ${formatMoney(p.balance)}</p>
+      </div>
+    `).join('') + '</div>';
+  }
+
+  async function renderChallenges() {
+    const cList = document.getElementById('challenges-list');
+    const empty = document.getElementById('challenges-empty');
+    const loading = document.getElementById('challenges-loading');
+    loading.classList.remove('hidden');
+    cList.innerHTML = '';
+    empty.classList.add('hidden');
+
+    const { data: challenges } = await supabase.from('challenges').select('*');
+    const { data: transactions } = await supabase.from('transactions').select('*');
+    const { data: allPlayers } = await supabase.from('challenge_players').select('*');
+
+    loading.classList.add('hidden');
+
+    if (!challenges || challenges.length === 0) {
+      empty.classList.remove('hidden');
+      return;
+    }
+
+    const sorted = [...challenges].sort((a, b) => {
+      if (a.status === 'active' && b.status !== 'active') return -1;
+      if (a.status !== 'active' && b.status === 'active') return 1;
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+
+    cList.innerHTML = sorted.slice(0, 20).map(c => {
+      const isFinished = c.status === 'finished';
+      const txns = (transactions || []).filter(t => t.challenge_id === c.id);
+      const cPlayers = (allPlayers || []).filter(p => p.challenge_id === c.id);
+      const p1User = cPlayers.find(p => p.player_slot === 'player1')?.username || '?';
+      const p2User = cPlayers.find(p => p.player_slot === 'player2')?.username || '?';
+      const b1 = txns.filter(t => t.player_slot === 'player1').reduce((s, t) => t.type === 'entrada' ? s + t.amount : s - t.amount, 0);
+      const b2 = txns.filter(t => t.player_slot === 'player2').reduce((s, t) => t.type === 'entrada' ? s + t.amount : s - t.amount, 0);
+
+      const isMember = cPlayers.some(p => p.username === currentPlayer);
+      const isCreator = c.created_by === currentPlayer;
+
+      let resultHTML = '';
+      if (isFinished) {
+        if (c.winner) resultHTML = '<p class="text-xs font-700 mt-2" style="color: #ff6b35;">🏆 ' + esc(c.winner) + ' venceu!</p>';
+        else if (b1 === b2 && b1 > 0) resultHTML = '<p class="text-xs font-700 mt-2" style="color: #38bdf8;">🤝 EMPATE!</p>';
+        else resultHTML = '<p class="text-xs font-700 mt-2" style="color: #666;">❌ Sem vencedor</p>';
+      }
+
+      let actionHTML = '';
+      if (!isFinished) {
+        if (isMember) {
+          actionHTML = '<button onclick="joinChallenge(\'' + c.id + '\')" class="w-full py-2 rounded-lg text-white font-600 text-xs transition-all mt-3" style="background: rgba(56,189,248,0.3);">ABRIR</button>';
+        } else if (cPlayers.length < 2) {
+          actionHTML = '<button onclick="requestJoin(\'' + c.id + '\', \'' + esc(c.name).replace(/'/g, "\\'") + '\')" class="w-full py-2 rounded-lg text-white font-600 text-xs transition-all mt-3" style="background: rgba(255,107,53,0.3);">ENTRAR</button>';
+        } else {
+          actionHTML = '<p class="text-xs text-gray-600 mt-3">Desafio cheio</p>';
+        }
+      } else {
+        actionHTML = '<div class="flex gap-2 mt-3">'
+          + (isMember ? '<button onclick="joinChallenge(\'' + c.id + '\')" class="flex-1 py-2 rounded-lg text-gray-400 font-600 text-xs" style="background: rgba(255,255,255,0.05);">VER</button>' : '<p class="text-xs text-gray-600 flex-1 text-center py-2">✓ Finalizado</p>')
+          + (isCreator ? '<button onclick="deleteChallenge(\'' + c.id + '\')" class="py-2 px-3 rounded-lg text-red-400 font-600 text-xs" style="background: rgba(239,68,68,0.1);">🗑️</button>' : '')
+          + '</div>';
+      }
+
+      return '<div class="rounded-2xl p-4 card-hover" style="background: ' + (isFinished ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.03)') + '; border: 1px solid rgba(255,255,255,' + (isFinished ? '0.05' : '0.08') + ');">'
+        + '<div class="flex items-center justify-between mb-2"><div>'
+        + '<h4 class="text-white font-700">' + esc(c.name) + '</h4>'
+        + '<p class="text-xs text-gray-500">' + esc(p1User) + ' vs ' + esc(p2User) + '</p>'
+        + '<div class="flex gap-2 mt-1">'
+        + '<span class="text-xs" style="color: #ff6b35;">🔥 ' + formatMoney(b1) + '</span>'
+        + '<span class="text-xs text-gray-600">·</span>'
+        + '<span class="text-xs" style="color: #38bdf8;">⚡ ' + formatMoney(b2) + '</span>'
+        + '</div></div>'
+        + '<p class="mono text-sm font-700" style="color: #999;">R$ ' + formatMoney(c.goal) + '</p></div>'
+        + resultHTML + actionHTML + '</div>';
+    }).join('');
+  }
+
+  // === CREATE CHALLENGE ===
+  async function createChallenge() {
+    const name = document.getElementById('create-name').value.trim();
+    const goal = parseFloat(document.getElementById('create-goal').value);
+    const startDate = document.getElementById('create-start').value;
+    const endDate = document.getElementById('create-end').value;
+    const errEl = document.getElementById('create-error');
+    errEl.classList.add('hidden');
+
+    if (!name || name.length < 3) { errEl.textContent = 'Nome deve ter 3+ caracteres.'; errEl.classList.remove('hidden'); return; }
+    if (!goal || goal < 100) { errEl.textContent = 'Meta mínima: R$ 100.'; errEl.classList.remove('hidden'); return; }
+    if (!startDate || !endDate) { errEl.textContent = 'Defina datas de início e término.'; errEl.classList.remove('hidden'); return; }
+    if (new Date(startDate) >= new Date(endDate)) { errEl.textContent = 'Término deve ser após início.'; errEl.classList.remove('hidden'); return; }
+
+    const btn = document.getElementById('create-btn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>CRIANDO...';
+
+    const challengeIdStr = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    const { data: newChallenge, error } = await supabase.from('challenges').insert([{
+      challenge_id: challengeIdStr, name, goal, status: 'active',
+      created_by: currentPlayer, start_date: startDate, end_date: endDate
+    }]).select().single();
+
+    if (!error && newChallenge) {
+      await supabase.from('challenge_players').insert([{
+        challenge_id: newChallenge.id, username: currentPlayer, player_slot: 'player1'
+      }]);
+    }
+
+    btn.disabled = false; btn.textContent = 'CRIAR DESAFIO';
+
+    if (!error) {
+      document.getElementById('create-name').value = '';
+      document.getElementById('create-goal').value = '';
+      document.getElementById('create-start').value = '';
+      document.getElementById('create-end').value = '';
+      showToast('🎯 Desafio criado!', '#22c55e');
+      renderChallenges();
+    } else { errEl.textContent = 'Erro ao criar. Tente novamente.'; errEl.classList.remove('hidden'); }
+  }
+
+  // === JOIN CHALLENGE ===
+  function requestJoin(challengeId, challengeName) {
+    joinTarget = challengeId;
+    document.getElementById('join-details').textContent = 'Você vai entrar em "' + challengeName + '" como adversário.';
+    document.getElementById('join-overlay').classList.remove('hidden');
+  }
+
+  function cancelJoin() {
+    joinTarget = null;
+    document.getElementById('join-overlay').classList.add('hidden');
+  }
+
+  async function confirmJoin() {
+    if (!joinTarget) return;
+    const id = joinTarget;
+    cancelJoin();
+    await joinChallenge(id);
+  }
+
+  async function joinChallenge(challengeId) {
+    const { data: challenge } = await supabase.from('challenges').select('*').eq('id', challengeId).single();
+    if (!challenge) return;
+
+    const { data: players } = await supabase.from('challenge_players').select('*').eq('challenge_id', challengeId);
+    const playersList = players || [];
+    const mySlot = playersList.find(p => p.username === currentPlayer);
+
+    if (mySlot) {
+      currentPlayerSlot = mySlot.player_slot;
+      currentChallenge = challengeId;
+      document.getElementById('hub-screen').classList.add('hidden');
+      document.getElementById('challenge-screen').classList.remove('hidden');
+      renderChallenge();
+      lucide.createIcons();
+      return;
+    }
+
+    if (playersList.length >= 2) { showToast('⚠️ Desafio já está cheio!', '#ef4444'); return; }
+
+    const hasP1 = playersList.find(p => p.player_slot === 'player1');
+    const slot = hasP1 ? 'player2' : 'player1';
+
+    const { error } = await supabase.from('challenge_players').insert([{
+      challenge_id: challengeId, username: currentPlayer, player_slot: slot
+    }]);
+
+    if (!error) {
+      currentPlayerSlot = slot;
+      currentChallenge = challengeId;
+      document.getElementById('hub-screen').classList.add('hidden');
+      document.getElementById('challenge-screen').classList.remove('hidden');
+      renderChallenge();
+      lucide.createIcons();
+    } else {
+      showToast('❌ Erro ao entrar no desafio!', '#ef4444');
+    }
+  }
+
+  // === DELETE CHALLENGE ===
+  async function deleteChallenge(challengeId) {
+    if (!confirm('Apagar este desafio finalizado? Isso removerá todos os registros.')) return;
+
+    await supabase.from('transactions').delete().eq('challenge_id', challengeId);
+    await supabase.from('challenge_players').delete().eq('challenge_id', challengeId);
+    await supabase.from('challenges').delete().eq('id', challengeId);
+
+    showToast('🗑️ Desafio apagado!', '#666');
+    renderChallenges();
+    renderMyHistory();
+    renderGlobalRanking();
+  }
+
+  // === RENDER CHALLENGE ===
+  async function renderChallenge() {
+    const { data: challenge } = await supabase.from('challenges').select('*').eq('id', currentChallenge).single();
+    if (!challenge) return;
+
+    const { data: transactions } = await supabase.from('transactions').select('*').eq('challenge_id', currentChallenge);
+    const { data: players } = await supabase.from('challenge_players').select('*').eq('challenge_id', currentChallenge);
+    const txns = transactions || [];
+    const playersList = players || [];
+    const p1User = playersList.find(p => p.player_slot === 'player1')?.username || 'Aguardando...';
+    const p2User = playersList.find(p => p.player_slot === 'player2')?.username || 'Aguardando...';
+
+    document.getElementById('challenge-name').textContent = challenge.name;
+    document.getElementById('goal-text').textContent = 'R$ ' + formatMoney(challenge.goal);
+
+    const playerName = currentPlayerSlot === 'player1' ? p1User : p2User;
+    document.getElementById('challenge-status').textContent = (currentPlayerSlot === 'player1' ? '🔥 Player 1' : '⚡ Player 2') + ' - ' + playerName;
+
+    const endDate = new Date(challenge.end_date + 'T23:59:59');
+    const now = new Date();
+    const endFormatted = endDate.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const endDay = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+    const isLastDay = today.getTime() === endDay.getTime();
+
+    document.getElementById('deadline-text').textContent = 'Até ' + endFormatted + (isLastDay ? ' 🔴 ÚLTIMO DIA' : '');
+
+    const timeRemaining = endDate - now;
+    const hoursRemaining = Math.ceil(timeRemaining / (1000 * 60 * 60));
+    let timeText, timeColor;
+    if (hoursRemaining <= 0) { timeText = 'PRAZO VENCIDO'; timeColor = '#ef4444'; }
+    else if (hoursRemaining <= 24) { timeText = hoursRemaining + 'h restante'; timeColor = '#f97316'; }
+    else { timeText = Math.ceil(hoursRemaining / 24) + ' dias'; timeColor = '#38bdf8'; }
+    document.getElementById('time-left').textContent = timeText;
+    document.getElementById('time-left').style.color = timeColor;
+
+    const b1 = txns.filter(t => t.player_slot === 'player1').reduce((s, t) => t.type === 'entrada' ? s + t.amount : s - t.amount, 0);
+    const b2 = txns.filter(t => t.player_slot === 'player2').reduce((s, t) => t.type === 'entrada' ? s + t.amount : s - t.amount, 0);
+
+    // Leader/loser - quem tem mais fica em cima
+    const p1Leading = b1 >= b2;
+    const leaderName = p1Leading ? p1User : p2User;
+    const loserName = p1Leading ? p2User : p1User;
+    const leaderBalance = p1Leading ? b1 : b2;
+    const loserBalance = p1Leading ? b2 : b1;
+    const leaderSlot = p1Leading ? 'player1' : 'player2';
+    const loserSlot = p1Leading ? 'player2' : 'player1';
+    const leaderColor = leaderSlot === 'player1' ? '#ff6b35' : '#38bdf8';
+    const loserColor = loserSlot === 'player1' ? '#ff6b35' : '#38bdf8';
+    const leaderEmoji = leaderSlot === 'player1' ? '🔥' : '⚡';
+    const loserEmoji = loserSlot === 'player1' ? '🔥' : '⚡';
+    const leaderPct = Math.min(100, Math.max(0, (leaderBalance / challenge.goal) * 100));
+    const loserPct = Math.min(100, Math.max(0, (loserBalance / challenge.goal) * 100));
+
+    const container = document.getElementById('players-container');
+    container.innerHTML = `
+      <div style="display: grid; grid-template-columns: 1fr; gap: 6px;">
+        <div class="rounded-2xl p-4 sm:p-6 card-hover relative pulse-winner" style="background: linear-gradient(135deg, ${leaderColor}40, ${leaderColor}14); border: 2px solid ${leaderColor}80;">
+          <div class="absolute -top-5 -right-5 text-4xl crown">👑</div>
+          <div class="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-2xl sm:text-3xl flex-shrink-0" style="background: ${leaderColor}66;">${leaderEmoji}</div>
+            <div>
+              <p class="text-white font-900 text-xl sm:text-2xl">${esc(leaderName)}</p>
+              <p class="text-xs font-700" style="color: ${leaderColor};">🥇 VENCENDO</p>
+            </div>
+          </div>
+          <p class="mono text-3xl sm:text-5xl font-900 mb-3 sm:mb-4" style="color: ${leaderColor};">R$ ${formatMoney(leaderBalance)}</p>
+          <div class="w-full h-3 sm:h-4 rounded-full" style="background: rgba(255,255,255,0.08); overflow: hidden;">
+            <div class="h-full rounded-full progress-bar" style="width: ${leaderPct}%; background: linear-gradient(90deg, ${leaderColor}, ${leaderColor}cc);"></div>
+          </div>
+          <p class="text-right text-sm text-gray-300 mt-2 mono font-700">${leaderPct.toFixed(0)}%</p>
+        </div>
+        <div class="rounded-2xl p-3 sm:p-4 card-hover relative" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.08); opacity: 0.7;">
+          <div class="flex items-center gap-3 mb-2 sm:mb-3">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center text-xl flex-shrink-0" style="background: ${loserColor}22;">${loserEmoji}</div>
+            <div>
+              <p class="text-gray-300 font-700 text-sm">${esc(loserName)}</p>
+              <p class="text-xs text-gray-500">🥈 ATRÁS</p>
+            </div>
+          </div>
+          <p class="mono text-xl sm:text-2xl font-700 mb-2 sm:mb-3" style="color: #999;">R$ ${formatMoney(loserBalance)}</p>
+          <div class="w-full h-2 rounded-full" style="background: rgba(255,255,255,0.05);">
+            <div class="h-2 rounded-full progress-bar" style="width: ${loserPct}%; background: ${loserColor}66;"></div>
+          </div>
+          <p class="text-right text-xs text-gray-600 mt-1 mono">${loserPct.toFixed(0)}%</p>
+        </div>
+      </div>
+    `;
+
+    // Check if challenge finished
+    let isFinished = challenge.status === 'finished';
+    const deadlinePassed = now > endDate;
+
+    // Auto-finish: meta atingida
+    if (!isFinished && (b1 >= challenge.goal || b2 >= challenge.goal)) {
+      const autoWinner = (b1 >= challenge.goal && b1 >= b2) ? p1User : p2User;
+      await supabase.from('challenges').update({ status: 'finished', winner: autoWinner }).eq('id', currentChallenge);
+      isFinished = true;
+      showVictoryModal(autoWinner, challenge.name);
+    }
+
+    // Auto-finish: prazo vencido
+    if (!isFinished && deadlinePassed) {
+      let autoWinner = null;
+      if (b1 > b2) autoWinner = p1User;
+      else if (b2 > b1) autoWinner = p2User;
+      await supabase.from('challenges').update({ status: 'finished', winner: autoWinner }).eq('id', currentChallenge);
+      isFinished = true;
+      if (autoWinner) showVictoryModal(autoWinner, challenge.name);
+      else showToast('⏰ Prazo vencido! Empate - sem vencedor.', '#f97316');
+    }
+
+    // Update badge
+    document.getElementById('badge-text').textContent = isFinished ? 'FINALIZADO' : 'ATIVO';
+    document.getElementById('badge-text').style.color = isFinished ? '#ef4444' : '#22c55e';
+
+    // Hide form when finished
+    document.getElementById('txn-form-section').classList.toggle('hidden', isFinished);
+    document.getElementById('finish-section').classList.toggle('hidden', isFinished);
+
+    // Manual finish button
+    const canFinish = deadlinePassed && !isFinished;
+    const finishBtn = document.getElementById('finish-btn');
+    finishBtn.disabled = !canFinish;
+    finishBtn.style.opacity = canFinish ? '1' : '0.5';
+    finishBtn.style.cursor = canFinish ? 'pointer' : 'not-allowed';
+
+    renderTransactions(txns);
+  }
+
+  function showVictoryModal(winner, challengeName) {
+    const isWinner = winner === currentPlayer;
+    document.getElementById('victory-title').textContent = isWinner ? '🏆 VITÓRIA!' : '😅 DERROTA';
+    document.getElementById('victory-msg').textContent = isWinner
+      ? 'Você venceu ' + challengeName + '!'
+      : winner + ' venceu este desafio!';
+    document.getElementById('victory-modal').classList.remove('hidden');
+  }
+
+  // === TRANSACTIONS ===
+  function renderTransactions(txns) {
+    const list = document.getElementById('txn-list');
+    const empty = document.getElementById('txn-empty');
+
+    if (!txns || txns.length === 0) {
+      empty.classList.remove('hidden');
+      list.innerHTML = '';
+      return;
+    }
+    empty.classList.add('hidden');
+
+    const p1User = txns.find(t => t.player_slot === 'player1')?.username || 'P1';
+    const p2User = txns.find(t => t.player_slot === 'player2')?.username || 'P2';
+
+    txns.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+    list.innerHTML = txns.map(d => {
+      const isEntrada = d.type === 'entrada';
+      const isMine = d.player_slot === currentPlayerSlot;
+      const date = new Date(d.created_at);
+      const dateStr = date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+      const playerName = d.player_slot === 'player1' ? p1User : p2User;
+      const playerEmoji = d.player_slot === 'player1' ? '🔥' : '⚡';
+      const playerLabel = isMine ? 'Você' : esc(playerName);
+      const badgeColor = d.player_slot === 'player1' ? '#ff6b35' : '#38bdf8';
+
+      return '<div class="flex items-center justify-between p-3 rounded-xl" style="background: rgba(255,255,255,0.03);">'
+        + '<div class="flex items-center gap-3 min-w-0 flex-1">'
+        + '<div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm flex-shrink-0" style="background: ' + (isEntrada ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)') + ';">' + (isEntrada ? '💰' : '💸') + '</div>'
+        + '<div class="min-w-0"><p class="text-white text-sm font-600 truncate">' + esc(d.description || 'Sem descrição') + '</p>'
+        + '<p class="text-xs" style="color: ' + badgeColor + ';">' + playerEmoji + ' ' + playerLabel + ' · ' + dateStr + '</p></div></div>'
+        + '<div class="flex items-center gap-2 flex-shrink-0">'
+        + '<span class="mono text-sm font-700" style="color: ' + (isEntrada ? '#22c55e' : '#ef4444') + ';">' + (isEntrada ? '+' : '-') + 'R$ ' + formatMoney(d.amount) + '</span>'
+        + (isMine ? '<button onclick="requestDelete(\'' + d.id + '\')" class="p-1 rounded-lg transition-all" style="background:rgba(255,255,255,0.05);"><i data-lucide="trash-2" style="width:14px;height:14px;color:#666;"></i></button>' : '')
+        + '</div></div>';
+    }).join('');
+
+    lucide.createIcons();
+  }
+
+  async function addTransaction() {
+    const type = document.getElementById('txn-type').value;
+    const amount = parseFloat(document.getElementById('txn-amount').value);
+    const desc = document.getElementById('txn-desc').value.trim();
+    const errEl = document.getElementById('add-error');
+
+    if (!amount || amount <= 0) { errEl.textContent = 'Informe um valor válido.'; errEl.classList.remove('hidden'); return; }
+    if (!currentPlayerSlot) { errEl.textContent = 'Erro: slot não definido. Recarregue.'; errEl.classList.remove('hidden'); return; }
+
+    // Check if challenge is still active
+    const { data: ch } = await supabase.from('challenges').select('status').eq('id', currentChallenge).single();
+    if (ch && ch.status === 'finished') {
+      errEl.textContent = 'Desafio já finalizado!';
+      errEl.classList.remove('hidden');
+      renderChallenge();
+      return;
+    }
+
+    errEl.classList.add('hidden');
+    const btn = document.getElementById('add-btn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>SALVANDO...';
+
+    const { error } = await supabase.from('transactions').insert([{
+      challenge_id: currentChallenge, player_slot: currentPlayerSlot,
+      username: currentPlayer, type,
+      description: desc || (type === 'entrada' ? 'Entrada' : 'Saída'),
+      amount
+    }]);
+
+    btn.disabled = false; btn.textContent = 'ADICIONAR';
+
+    if (!error) {
+      document.getElementById('txn-amount').value = '';
+      document.getElementById('txn-desc').value = '';
+      showToast(type === 'entrada' ? '💰 Entrada registrada!' : '💸 Saída registrada!', type === 'entrada' ? '#22c55e' : '#ef4444');
+      renderChallenge();
+    } else { errEl.textContent = 'Erro ao salvar. Tente novamente.'; errEl.classList.remove('hidden'); }
+  }
+
+  // === FINISH ===
+  async function finishChallenge() {
+    const { data: challenge } = await supabase.from('challenges').select('*').eq('id', currentChallenge).single();
+    if (!challenge) return;
+
+    const { data: txns } = await supabase.from('transactions').select('*').eq('challenge_id', currentChallenge);
+    const { data: players } = await supabase.from('challenge_players').select('*').eq('challenge_id', currentChallenge);
+    const transactions = txns || [];
+    const playersList = players || [];
+    const p1User = playersList.find(p => p.player_slot === 'player1')?.username;
+    const p2User = playersList.find(p => p.player_slot === 'player2')?.username;
+
+    const b1 = transactions.filter(t => t.player_slot === 'player1').reduce((s, t) => t.type === 'entrada' ? s + t.amount : s - t.amount, 0);
+    const b2 = transactions.filter(t => t.player_slot === 'player2').reduce((s, t) => t.type === 'entrada' ? s + t.amount : s - t.amount, 0);
+
+    let winner = null;
+    if (b1 > b2) winner = p1User;
+    else if (b2 > b1) winner = p2User;
+
+    const btn = document.getElementById('finish-btn');
+    btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>FINALIZANDO...';
+
+    const { error } = await supabase.from('challenges').update({ status: 'finished', winner }).eq('id', currentChallenge);
+    btn.disabled = false; btn.textContent = 'FINALIZAR DESAFIO';
+
+    if (!error) {
+      if (winner) showVictoryModal(winner, challenge.name);
+      else showToast('🤝 Empate! Ninguém venceu.', '#f97316');
+      renderChallenge();
+    }
+  }
+
+  // === NAV ===
+  function closeVictory() {
+    document.getElementById('victory-modal').classList.add('hidden');
+    backToHub();
+  }
+
+  function backToHub() {
+    currentChallenge = null; currentPlayerSlot = null;
+    document.getElementById('challenge-screen').classList.add('hidden');
+    document.getElementById('hub-screen').classList.remove('hidden');
+    renderHub();
+    lucide.createIcons();
+  }
+
+  // === DELETE TXN ===
+  async function requestDelete(id) {
+    deleteTarget = id;
+    document.getElementById('delete-overlay').classList.remove('hidden');
+  }
+
+  function cancelDelete() {
+    deleteTarget = null;
+    document.getElementById('delete-overlay').classList.add('hidden');
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    const btn = document.getElementById('confirm-del-btn');
+    btn.disabled = true; btn.textContent = 'Apagando...';
+
+    const { error } = await supabase.from('transactions').delete().eq('id', deleteTarget);
+    btn.disabled = false; btn.textContent = 'Apagar';
+    document.getElementById('delete-overlay').classList.add('hidden');
+
+    if (!error) { showToast('Registro apagado!', '#666'); renderChallenge(); }
+    else showToast('Erro ao apagar.', '#ef4444');
+    deleteTarget = null;
+  }
+
+  // === TOAST ===
+  function showToast(msg, color) {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.style.background = color;
+    t.style.color = '#fff';
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+  }
+
+  lucide.createIcons();
+  </script>
+ </body>
+</html>
