@@ -408,22 +408,39 @@
   }
 
   // === REALTIME ===
+  let _rtDebounce = null;
+  function _debouncedRefresh(immediate) {
+    if (_rtDebounce) clearTimeout(_rtDebounce);
+    _rtDebounce = setTimeout(() => {
+      if (currentChallenge) renderChallenge();
+      else renderHub();
+    }, immediate ? 0 : 350);
+  }
+
   function subscribeRealtime() {
     unsubscribeRealtime();
-    realtimeChannel = supabase.channel('challenge-updates')
+    realtimeChannel = supabase.channel('arena-realtime-' + Date.now())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'transactions' }, (payload) => {
-        if (currentChallenge && payload.new && payload.new.challenge_id === currentChallenge && payload.new.username !== currentPlayer) {
-          showToast('⚡ Seu oponente adicionou um registro!', '#38bdf8');
-          renderChallenge();
+        if (currentChallenge) {
+          const cid = (payload.new && payload.new.challenge_id) || (payload.old && payload.old.challenge_id);
+          if (cid === currentChallenge) {
+            const who = (payload.new && payload.new.username) || (payload.old && payload.old.username);
+            if (who && who !== currentPlayer) {
+              const ev = payload.eventType;
+              if (ev === 'INSERT') showToast('⚡ Seu oponente adicionou um registro!', '#38bdf8');
+              else if (ev === 'DELETE') showToast('⚡ Seu oponente removeu um registro!', '#f97316');
+            }
+            _debouncedRefresh();
+          }
+        } else {
+          _debouncedRefresh();
         }
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'challenges' }, () => {
-        if (currentChallenge) renderChallenge();
-        else renderHub();
+        _debouncedRefresh();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'challenge_players' }, () => {
-        if (currentChallenge) renderChallenge();
-        else renderHub();
+        _debouncedRefresh();
       })
       .subscribe();
   }
@@ -439,9 +456,7 @@
   async function renderHub() {
     subscribeRealtime();
     document.getElementById('hub-player').textContent = '👤 ' + esc(currentPlayer);
-    renderMyHistory();
-    renderGlobalRanking();
-    renderChallenges();
+    await Promise.all([renderMyHistory(), renderGlobalRanking(), renderChallenges()]);
   }
 
   async function renderMyHistory() {
@@ -470,17 +485,17 @@
     });
 
     el.innerHTML = `
-      <div class="grid grid-cols-3 gap-3">
-        <div class="text-center p-3 rounded-xl" style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);">
+      <div class="grid grid-cols-3 gap-2 sm:gap-3">
+        <div class="text-center p-2 sm:p-3 rounded-xl" style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.2);">
           <p class="text-2xl font-900" style="color: #22c55e;">${wins}</p>
           <p class="text-xs text-gray-400 font-600">Vitórias</p>
         </div>
-        <div class="text-center p-3 rounded-xl" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);">
+        <div class="text-center p-2 sm:p-3 rounded-xl" style="background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2);">
           <p class="text-2xl font-900" style="color: #ef4444;">${losses}</p>
           <p class="text-xs text-gray-400 font-600">Derrotas</p>
         </div>
-        <div class="text-center p-3 rounded-xl" style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2);">
-          <p class="text-lg font-900 mono" style="color: ${totalBalance >= 0 ? '#22c55e' : '#ef4444'};">${totalBalance >= 0 ? '+' : '-'}R$${formatMoney(totalBalance)}</p>
+        <div class="text-center p-2 sm:p-3 rounded-xl overflow-hidden" style="background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.2);">
+          <p class="text-xs sm:text-sm font-900 mono truncate" style="color: ${totalBalance >= 0 ? '#22c55e' : '#ef4444'};">${totalBalance >= 0 ? '+' : '-'}R$${formatMoney(totalBalance)}</p>
           <p class="text-xs text-gray-400 font-600">Saldo Total</p>
         </div>
       </div>
