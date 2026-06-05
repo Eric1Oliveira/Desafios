@@ -890,7 +890,69 @@
     .rank-champ.clickable { cursor:pointer; transition:box-shadow 0.2s; }
     .rank-champ.clickable:hover { box-shadow:0 0 30px rgba(245,158,11,0.2); }
 
-    @media (max-width:820px){ .ach-grid{ grid-template-columns:1fr; } }
+    /* ── MEDALS ── */
+    .medal-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px; margin-bottom:24px; }
+    .medal-card {
+      border-radius:16px; border:2px solid; padding:16px; display:flex; gap:12px;
+      align-items:flex-start; position:relative; overflow:hidden; transition:all 0.2s;
+    }
+    .medal-card::before {
+      content:''; position:absolute; inset:0; border-radius:14px;
+      background:linear-gradient(135deg,rgba(255,255,255,0.07) 0%,transparent 60%);
+    }
+    .medal-card.locked { opacity:0.32; filter:grayscale(0.8); }
+    .medal-card.bronze { border-color:rgba(180,100,40,0.7); background:linear-gradient(135deg,rgba(180,100,40,0.12),rgba(8,11,26,0.9)); }
+    .medal-card.silver { border-color:rgba(192,192,192,0.7); background:linear-gradient(135deg,rgba(192,192,192,0.12),rgba(8,11,26,0.9)); }
+    .medal-card.gold   { border-color:rgba(245,158,11,0.7);  background:linear-gradient(135deg,rgba(245,158,11,0.14),rgba(8,11,26,0.9)); box-shadow:0 0 18px rgba(245,158,11,0.15); }
+    .medal-card.platinum{ border-color:rgba(6,182,212,0.7);  background:linear-gradient(135deg,rgba(6,182,212,0.14),rgba(8,11,26,0.9)); box-shadow:0 0 18px rgba(6,182,212,0.15); }
+    .medal-card.diamond{ border-color:rgba(168,85,247,0.7);  background:linear-gradient(135deg,rgba(168,85,247,0.14),rgba(8,11,26,0.9)); box-shadow:0 0 22px rgba(168,85,247,0.2); }
+    .medal-card.legend { border-color:rgba(239,68,68,0.8);   background:linear-gradient(135deg,rgba(239,68,68,0.18),rgba(124,58,237,0.1),rgba(8,11,26,0.9)); box-shadow:0 0 28px rgba(239,68,68,0.25); animation:mythic-glow 3s ease-in-out infinite; }
+    .medal-icon { width:52px; height:52px; border-radius:50%; display:grid; place-items:center; font-size:1.7rem; flex-shrink:0; border:2px solid rgba(255,255,255,0.15); }
+    .medal-card.bronze .medal-icon  { background:radial-gradient(circle,rgba(180,100,40,0.4),rgba(0,0,0,0.3)); }
+    .medal-card.silver .medal-icon  { background:radial-gradient(circle,rgba(192,192,192,0.4),rgba(0,0,0,0.3)); }
+    .medal-card.gold   .medal-icon  { background:radial-gradient(circle,rgba(245,158,11,0.5),rgba(0,0,0,0.3)); }
+    .medal-card.platinum .medal-icon{ background:radial-gradient(circle,rgba(6,182,212,0.5),rgba(0,0,0,0.3)); }
+    .medal-card.diamond .medal-icon { background:radial-gradient(circle,rgba(168,85,247,0.5),rgba(0,0,0,0.3)); }
+    .medal-card.legend .medal-icon  { background:radial-gradient(circle,rgba(239,68,68,0.6),rgba(124,58,237,0.4)); }
+
+    .medal-tier-badge { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; padding:2px 8px; border-radius:999px; display:inline-block; margin-bottom:4px; }
+    .medal-tier-bronze  { color:#b46428; background:rgba(180,100,40,0.18); }
+    .medal-tier-silver  { color:#c0c0c0; background:rgba(192,192,192,0.15); }
+    .medal-tier-gold    { color:#f59e0b; background:rgba(245,158,11,0.18); }
+    .medal-tier-platinum{ color:#06b6d4; background:rgba(6,182,212,0.15); }
+    .medal-tier-diamond { color:#a855f7; background:rgba(168,85,247,0.15); }
+    .medal-tier-legend  { color:#ef4444; background:rgba(239,68,68,0.15); }
+
+    /* Selectable medal/ach for profile pick */
+    .pick-card { border-radius:12px; border:2px solid var(--line); padding:10px 12px; cursor:pointer; transition:all 0.18s; display:flex; gap:10px; align-items:center; background:rgba(255,255,255,0.03); }
+    .pick-card:hover { border-color:rgba(124,58,237,0.5); background:rgba(124,58,237,0.08); }
+    .pick-card.selected { border-color:rgba(124,58,237,0.8); background:rgba(124,58,237,0.18); box-shadow:0 0 14px rgba(124,58,237,0.2); }
+    .pick-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:8px; max-height:280px; overflow-y:auto; padding-right:4px; scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
+
+    /* ── LEVEL / XP ── */
+    .level-badge {
+      display:inline-flex; align-items:center; gap:6px;
+      border-radius:999px; padding:4px 12px; font-size:11px; font-weight:800;
+      border:1px solid; cursor:default;
+    }
+    .xp-bar-wrap { margin-top:10px; }
+    .xp-bar { height:5px; border-radius:999px; background:rgba(255,255,255,0.08); overflow:hidden; }
+    .xp-bar > span { display:block; height:100%; border-radius:999px; transition:width 0.6s ease; }
+
+    /* Locked ach requirement hint */
+    .ach-req { font-size:10px; margin-top:5px; padding:4px 8px; border-radius:8px; background:rgba(255,255,255,0.05); border:1px solid var(--line); display:inline-block; }
+
+    /* Profile edit modal */
+    .pick-modal-box {
+      width:min(96vw,680px); max-height:90vh; display:flex; flex-direction:column;
+      border-radius:22px; border:1px solid var(--line-2); background:#080b1a;
+      overflow:hidden; box-shadow:0 32px 80px rgba(0,0,0,0.75);
+    }
+    .pick-modal-header { padding:18px 22px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+    .pick-modal-body { overflow-y:auto; flex:1; padding:18px 22px; scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
+    .pick-modal-footer { padding:16px 22px; border-top:1px solid var(--line); display:flex; gap:10px; flex-shrink:0; }
+
+    @media (max-width:820px){ .ach-grid,.medal-grid{ grid-template-columns:1fr; } }
   </style>
   <script>
     const SUPABASE_URL = 'https://jydmnydlfynktydngjmj.supabase.co';
@@ -1242,6 +1304,29 @@
     </div>
   </div>
 
+  <!-- ══════════════ PROFILE EDIT PICKER ══════════════ -->
+  <div id="pick-modal" class="modal" style="z-index:90;">
+    <div class="pick-modal-box">
+      <div class="pick-modal-header">
+        <div style="font-weight:800;font-size:1rem;">✏️ Personalizar Perfil</div>
+        <button class="btn btn-flat" onclick="closePickModal()" style="padding:5px 11px;font-size:13px;">✕</button>
+      </div>
+      <div class="pick-modal-body">
+        <p class="muted" style="font-size:13px;margin-bottom:16px;line-height:1.6;">Escolha ate <strong style="color:#a78bfa;">3 conquistas</strong> e ate <strong style="color:#f59e0b;">3 medalhas</strong> para exibir em destaque no seu perfil.</p>
+
+        <div class="section-title" style="margin-bottom:10px;">🏆 Conquistas em Destaque <span id="pick-ach-count" style="color:#a78bfa;font-weight:800;font-size:11px;margin-left:6px;">(0/3)</span></div>
+        <div id="pick-ach-grid" class="pick-grid" style="margin-bottom:20px;"></div>
+
+        <div class="section-title" style="margin-bottom:10px;">🎖️ Medalhas em Destaque <span id="pick-med-count" style="color:#f59e0b;font-weight:800;font-size:11px;margin-left:6px;">(0/3)</span></div>
+        <div id="pick-med-grid" class="pick-grid"></div>
+      </div>
+      <div class="pick-modal-footer">
+        <button class="btn btn-flat" style="flex:1;" onclick="closePickModal()">Cancelar</button>
+        <button class="btn btn-main" style="flex:2;" onclick="savePickedProfile()">💾 Salvar Perfil</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ══════════════ PROFILE MODAL ══════════════ -->
   <div id="profile-modal" class="modal" style="z-index:65;">
     <div class="profile-box">
@@ -1402,6 +1487,116 @@
     // Mapeamento rápido por ID
     const ACH_MAP = Object.fromEntries(ACHIEVEMENTS.map(a => [a.id, a]));
 
+    /* ═══════════════════════════════════════════════════════════
+       MEDALHAS — troféus especiais de alto prestígio
+       ═══════════════════════════════════════════════════════════ */
+    const MEDALS = [
+      // ── BRONZE ──
+      { id:'medal_first_step',    name:'Iniciante',           desc:'Entre no seu primeiro desafio.',                       icon:'🌱', tier:'bronze', condition: s=>s.challengesParticipated>=1 },
+      { id:'medal_first_win',     name:'Primeira Vitoria',    desc:'Venca o seu primeiro desafio.',                        icon:'🏅', tier:'bronze', condition: s=>s.wins>=1 },
+      { id:'medal_first_tx',      name:'Primeiro Registro',   desc:'Registre a sua primeira transacao.',                   icon:'📝', tier:'bronze', condition: s=>s.totalTransactions>=1 },
+      { id:'medal_first_atk',     name:'Primeiro Ataque',     desc:'Envie seu primeiro emoji de ataque.',                  icon:'🐥', tier:'bronze', condition: s=>s.attacksSent>=1 },
+      { id:'medal_5_wins',        name:'Cinco Vitorias',      desc:'Venca 5 desafios.',                                    icon:'🥉', tier:'bronze', condition: s=>s.wins>=5 },
+      { id:'medal_10_tx',         name:'Dez Registros',       desc:'Adicione 10 transacoes.',                              icon:'📊', tier:'bronze', condition: s=>s.totalTransactions>=10 },
+      { id:'medal_first_loss',    name:'Guerreiro Caido',     desc:'Perca seu primeiro desafio. Volte mais forte!',        icon:'💪', tier:'bronze', condition: s=>s.losses>=1 },
+      { id:'medal_creator',       name:'O Organizador',       desc:'Crie o seu primeiro desafio.',                         icon:'🎯', tier:'bronze', condition: s=>s.challengesCreated>=1 },
+
+      // ── SILVER ──
+      { id:'medal_10_wins',       name:'Dez Vitorias',        desc:'Venca 10 desafios.',                                   icon:'🥈', tier:'silver', condition: s=>s.wins>=10 },
+      { id:'medal_streak_3',      name:'Sequencia de Fogo',   desc:'Venca 3 desafios em sequencia.',                       icon:'🔥', tier:'silver', condition: s=>s.winStreak>=3 },
+      { id:'medal_100_tx',        name:'Centenario',          desc:'Registre 100 transacoes.',                             icon:'💯', tier:'silver', condition: s=>s.totalTransactions>=100 },
+      { id:'medal_1k_balance',    name:'Primeiro Milhar',     desc:'Alcance R$1.000 de saldo acumulado.',                  icon:'💰', tier:'silver', condition: s=>s.totalBalance>=1000 },
+      { id:'medal_25_challenges', name:'Veterano',            desc:'Participe de 25 desafios.',                            icon:'⚔️', tier:'silver', condition: s=>s.challengesParticipated>=25 },
+      { id:'medal_20_atk',        name:'Zoador',              desc:'Envie 20 ataques.',                                    icon:'🤣', tier:'silver', condition: s=>s.attacksSent>=20 },
+      { id:'medal_25_wins',       name:'Vinte e Cinco',       desc:'Venca 25 desafios.',                                   icon:'🛡️', tier:'silver', condition: s=>s.wins>=25 },
+      { id:'medal_both_slots',    name:'Versatil',            desc:'Venca como criador e como invasor.',                   icon:'🔀', tier:'silver', condition: s=>s.winsAsP1>=1&&s.winsAsP2>=1 },
+
+      // ── GOLD ──
+      { id:'medal_50_wins',       name:'Cinquenta Conquistas',desc:'Venca 50 desafios.',                                   icon:'🥇', tier:'gold',   condition: s=>s.wins>=50 },
+      { id:'medal_streak_5',      name:'Em Chamas',           desc:'Venca 5 desafios seguidos.',                           icon:'⚡', tier:'gold',   condition: s=>s.winStreak>=5 },
+      { id:'medal_10k_balance',   name:'Dez Mil',             desc:'Alcance R$10.000 de saldo.',                           icon:'💵', tier:'gold',   condition: s=>s.totalBalance>=10000 },
+      { id:'medal_500_tx',        name:'Maquina de Registro', desc:'500 transacoes registradas.',                          icon:'⚙️', tier:'gold',   condition: s=>s.totalTransactions>=500 },
+      { id:'medal_100_challenges','name':'Centenario de Duelos',desc:'Participe de 100 desafios.',                         icon:'🏟️', tier:'gold',   condition: s=>s.challengesParticipated>=100 },
+      { id:'medal_100_atk',       name:'Zoador Lendario',     desc:'Envie 100 ataques.',                                   icon:'🎭', tier:'gold',   condition: s=>s.attacksSent>=100 },
+      { id:'medal_invicto',       name:'Invicto',             desc:'Finalize 10+ desafios sem nenhuma derrota.',           icon:'🕊️', tier:'gold',   condition: s=>(s.wins+s.draws)>=10&&s.losses===0 },
+
+      // ── PLATINUM ──
+      { id:'medal_100_wins',      name:'Centenario de Ouro',  desc:'Venca 100 desafios.',                                  icon:'🏆', tier:'platinum',condition: s=>s.wins>=100 },
+      { id:'medal_streak_10',     name:'Inparavel',           desc:'Venca 10 desafios seguidos.',                          icon:'💫', tier:'platinum',condition: s=>s.winStreak>=10 },
+      { id:'medal_100k_balance',  name:'Cem Mil',             desc:'Alcance R$100.000 de saldo.',                          icon:'💳', tier:'platinum',condition: s=>s.totalBalance>=100000 },
+      { id:'medal_1k_tx',         name:'Mil Registros',       desc:'1.000 transacoes registradas.',                        icon:'🧮', tier:'platinum',condition: s=>s.totalTransactions>=1000 },
+      { id:'medal_winrate_80',    name:'Precisao Cirurgica',  desc:'Win rate de 80%+ com 20+ desafios.',                   icon:'🎯', tier:'platinum',condition: s=>s.challengesParticipated>=20&&(s.wins/s.challengesParticipated*100)>=80 },
+
+      // ── DIAMOND ──
+      { id:'medal_200_wins',      name:'Duzentas Vitorias',   desc:'Venca 200 desafios.',                                  icon:'👑', tier:'diamond', condition: s=>s.wins>=200 },
+      { id:'medal_1m_balance',    name:'Milionario',          desc:'Alcance R$1.000.000 de saldo.',                        icon:'🤑', tier:'diamond', condition: s=>s.totalBalance>=1000000 },
+      { id:'medal_streak_20',     name:'Dominador',           desc:'Venca 20 desafios seguidos.',                          icon:'🌟', tier:'diamond', condition: s=>s.winStreak>=20 },
+      { id:'medal_5k_tx',         name:'Cinco Mil Registros', desc:'5.000 transacoes registradas.',                        icon:'💎', tier:'diamond', condition: s=>s.totalTransactions>=5000 },
+
+      // ── LEGEND ──
+      { id:'medal_500_wins',      name:'Quinhentas Vitorias', desc:'Venca 500 desafios. Voce e uma lenda.',                icon:'⚡', tier:'legend',  condition: s=>s.wins>=500 },
+      { id:'medal_10m_balance',   name:'Dezenas de Milhoes',  desc:'Alcance R$10.000.000 de saldo.',                       icon:'🌌', tier:'legend',  condition: s=>s.totalBalance>=10000000 },
+      { id:'medal_deus_arena',    name:'Deus da Arena',       desc:'10.000 transacoes + 500 vitorias.',                    icon:'🔱', tier:'legend',  condition: s=>s.totalTransactions>=10000&&s.wins>=500 },
+    ];
+
+    const MEDAL_MAP = Object.fromEntries(MEDALS.map(m => [m.id, m]));
+    const ALL_TRACKABLE = [...ACHIEVEMENTS, ...MEDALS]; // usado para verificação combinada
+
+    /* ═══════════════════════════════════════════════════════════
+       SISTEMA DE NÍVEL E XP
+       ═══════════════════════════════════════════════════════════ */
+    const XP_PER_RARITY = { comum:1, incomum:3, raro:8, epico:20, lendario:50, mitico:150 };
+    const XP_PER_MEDAL_TIER = { bronze:5, silver:15, gold:40, platinum:100, diamond:250, legend:600 };
+    const LEVELS = [
+      { name:'Novato',     icon:'🌱', min:0,    max:49,   color:'#9ca3af', bg:'rgba(156,163,175,0.15)', border:'rgba(156,163,175,0.4)' },
+      { name:'Aspirante',  icon:'🔰', min:50,   max:149,  color:'#22c55e', bg:'rgba(34,197,94,0.15)',   border:'rgba(34,197,94,0.5)' },
+      { name:'Guerreiro',  icon:'⚔️', min:150,  max:349,  color:'#3b82f6', bg:'rgba(59,130,246,0.15)',  border:'rgba(59,130,246,0.5)' },
+      { name:'Veterano',   icon:'🛡️', min:350,  max:699,  color:'#a855f7', bg:'rgba(168,85,247,0.15)',  border:'rgba(168,85,247,0.5)' },
+      { name:'Elite',      icon:'💎', min:700,  max:1199, color:'#06b6d4', bg:'rgba(6,182,212,0.15)',   border:'rgba(6,182,212,0.5)' },
+      { name:'Mestre',     icon:'🏆', min:1200, max:1999, color:'#f59e0b', bg:'rgba(245,158,11,0.15)',  border:'rgba(245,158,11,0.5)' },
+      { name:'Campeao',    icon:'👑', min:2000, max:2999, color:'#f59e0b', bg:'rgba(245,158,11,0.18)',  border:'rgba(245,158,11,0.6)' },
+      { name:'Lenda',      icon:'⚡', min:3000, max:4999, color:'#ef4444', bg:'rgba(239,68,68,0.15)',   border:'rgba(239,68,68,0.55)' },
+      { name:'Imortal',    icon:'🌟', min:5000, max:7999, color:'#ef4444', bg:'rgba(239,68,68,0.2)',    border:'rgba(239,68,68,0.65)' },
+      { name:'Deus',       icon:'🌌', min:8000, max:Infinity, color:'#a855f7', bg:'rgba(168,85,247,0.25)', border:'rgba(239,68,68,0.8)' },
+    ];
+
+    function computeXP(unlockedIds) {
+      let xp = 0;
+      unlockedIds.forEach(id => {
+        const ach = ACH_MAP[id];
+        if (ach) xp += XP_PER_RARITY[ach.rarity] || 0;
+        const med = MEDAL_MAP[id];
+        if (med) xp += XP_PER_MEDAL_TIER[med.tier] || 0;
+      });
+      return xp;
+    }
+
+    function getLevelInfo(xp) {
+      const lvl = LEVELS.findIndex(l => xp >= l.min && xp <= l.max);
+      const level = LEVELS[Math.max(0, lvl)];
+      const next = LEVELS[Math.min(LEVELS.length - 1, lvl + 1)];
+      const pct = level === next ? 100 : Math.round((xp - level.min) / (next.min - level.min) * 100);
+      return { level, next, xp, pct, idx: Math.max(0, lvl) };
+    }
+
+    function levelBadgeHTML(xp) {
+      const { level } = getLevelInfo(xp);
+      return `<span class="level-badge" style="background:${level.bg};border-color:${level.border};color:${level.color};">${level.icon} ${level.name}</span>`;
+    }
+
+    // Chave localStorage para preferências de perfil
+    function profileKey(username) { return `arena.profile.featured.${username}`; }
+    function getProfileFeatured(username) {
+      try { return JSON.parse(localStorage.getItem(profileKey(username))) || { achs:[], medals:[] }; }
+      catch { return { achs:[], medals:[] }; }
+    }
+    function saveProfileFeaturedLocal(username, data) {
+      localStorage.setItem(profileKey(username), JSON.stringify(data));
+    }
+
+    // Global pending achievements (populated in openHub, consumed in closeUpdateModal)
+    let _pendingUnlockAchs = [];
+
     const TAUNT_PRESETS = [
       { emoji: '🐥', text: 'Patinho detected!' },
       { emoji: '🤣', text: 'Rindo do seu saldo.' },
@@ -1505,29 +1700,32 @@
       saveAuth(user, remember);
       currentChallenge = null;
       currentSlot = null;
+      _pendingUnlockAchs = [];
       subscribeRealtime();
       document.getElementById('login-view').classList.add('hidden');
       document.getElementById('arena-view').classList.add('hidden');
       document.getElementById('hub-view').classList.remove('hidden');
-      // Reset tab to arena on every login
       switchHubTab('arena');
       renderHub();
       checkPendingTaunts();
       if (fromAuto) showToast('Login salvo ativo. Bem-vindo de volta.', '#059669');
 
-      // Show update modal first, then award achievements
-      showUpdateModal();
-      setTimeout(async () => {
-        const newAchs = await checkAndAwardNewAchievements(user);
-        if (newAchs.length > 0) {
-          // Sort: highest rarity first
-          const ro = ['mitico','lendario','epico','raro','incomum','comum'];
-          newAchs.sort((a, b) => ro.indexOf(a.rarity) - ro.indexOf(b.rarity));
-          // Delay so update modal can be seen first
-          const delay = localStorage.getItem(VERSION_SEEN_KEY) === APP_VERSION ? 400 : 2600;
-          setTimeout(() => showAchievementUnlockSequence(newAchs), delay);
+      // Compute new achievements in background (stored in _pendingUnlockAchs)
+      const updateAlreadySeen = localStorage.getItem(VERSION_SEEN_KEY) === APP_VERSION;
+      checkAndAwardNewAchievements(user).then(newAchs => {
+        if (newAchs.length === 0) return;
+        const ro = ['mitico','lendario','epico','raro','incomum','comum'];
+        newAchs.sort((a, b) => ro.indexOf(a.rarity) - ro.indexOf(b.rarity));
+        _pendingUnlockAchs = newAchs;
+        if (updateAlreadySeen) {
+          // No update modal shown — fire directly after small delay
+          setTimeout(() => { showAchievementUnlockSequence(_pendingUnlockAchs); _pendingUnlockAchs = []; }, 700);
         }
-      }, 800);
+        // else: closeUpdateModal() will trigger them
+      });
+
+      // Show update modal (does nothing if already seen)
+      showUpdateModal();
     }
 
     async function handleSignup() {
@@ -2608,9 +2806,12 @@
     async function checkAndAwardNewAchievements(username) {
       const [stats, unlocked] = await Promise.all([computePlayerStats(username), getUnlockedIds(username)]);
       const unlockedSet = new Set(unlocked.map(u => u.achievement_id));
-      const toUnlock = ACHIEVEMENTS.filter(ach => !unlockedSet.has(ach.id) && ach.condition(stats));
+      // Check regular achievements + medals
+      const newAchs = ACHIEVEMENTS.filter(a => !unlockedSet.has(a.id) && a.condition(stats));
+      const newMeds = MEDALS.filter(m => !unlockedSet.has(m.id) && m.condition(stats));
+      const toUnlock = [...newAchs, ...newMeds];
       if (toUnlock.length === 0) return [];
-      const rows = toUnlock.map(ach => ({ username, achievement_id: ach.id }));
+      const rows = toUnlock.map(item => ({ username, achievement_id: item.id }));
       await sb.from('player_achievements').upsert(rows, { onConflict: 'username,achievement_id', ignoreDuplicates: true });
       return toUnlock;
     }
@@ -2646,6 +2847,12 @@
     function closeUpdateModal() {
       localStorage.setItem(VERSION_SEEN_KEY, APP_VERSION);
       document.getElementById('update-modal').classList.remove('show');
+      // Now fire pending achievement unlocks (if any were computed while modal was open)
+      if (_pendingUnlockAchs.length > 0) {
+        const toShow = [..._pendingUnlockAchs];
+        _pendingUnlockAchs = [];
+        setTimeout(() => showAchievementUnlockSequence(toShow), 500);
+      }
     }
 
     /* ═══════════════════════════════════════
@@ -2667,27 +2874,38 @@
         document.getElementById('ach-unlock-modal').classList.remove('show');
         return;
       }
-      const ach = _unlockQueue[_unlockCurrentIdx];
+      const item = _unlockQueue[_unlockCurrentIdx];
       const remaining = _unlockQueue.length - _unlockCurrentIdx - 1;
-      const rarityColors = { comum:'#9ca3af',incomum:'#22c55e',raro:'#3b82f6',epico:'#a855f7',lendario:'#f59e0b',mitico:'#ef4444' };
-      const rarityLabels = { comum:'Comum',incomum:'Incomum',raro:'Raro',epico:'Epico',lendario:'Lendario',mitico:'Mitico' };
-      const color = rarityColors[ach.rarity] || '#9ca3af';
+      const isMedal = !!item.tier;
+
+      // Color/label logic — medals use tier, achievements use rarity
+      const tierColors  = { bronze:'#b46428',silver:'#c0c0c0',gold:'#f59e0b',platinum:'#06b6d4',diamond:'#a855f7',legend:'#ef4444' };
+      const tierLabels  = { bronze:'Bronze',silver:'Prata',gold:'Ouro',platinum:'Platina',diamond:'Diamante',legend:'Lenda' };
+      const rarityColors= { comum:'#9ca3af',incomum:'#22c55e',raro:'#3b82f6',epico:'#a855f7',lendario:'#f59e0b',mitico:'#ef4444' };
+      const rarityLabels= { comum:'Comum',incomum:'Incomum',raro:'Raro',epico:'Epico',lendario:'Lendario',mitico:'Mitico' };
+
+      const color = isMedal ? (tierColors[item.tier] || '#f59e0b') : (rarityColors[item.rarity] || '#9ca3af');
+      const label = isMedal ? (tierLabels[item.tier] || item.tier) : (rarityLabels[item.rarity] || item.rarity);
+      const boxClass = isMedal
+        ? `unlock-box unlock-${item.tier === 'legend' ? 'mitico' : item.tier === 'diamond' ? 'epico' : item.tier === 'platinum' ? 'raro' : item.tier === 'gold' ? 'lendario' : 'incomum'}`
+        : `unlock-box unlock-${item.rarity}`;
+
       const box = document.getElementById('ach-unlock-box');
-      box.className = `unlock-box unlock-${ach.rarity}`;
+      box.className = boxClass;
       box.innerHTML = `
         <div class="unlock-inner">
-          <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:${color};margin-bottom:12px;">🔔 Conquista Desbloqueada!</div>
-          <div style="font-size:4rem;margin-bottom:10px;animation:pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);">${ach.icon}</div>
-          <div class="rarity-label rarity-${ach.rarity}" style="margin-bottom:8px;">${rarityLabels[ach.rarity]}</div>
-          <h3 style="font-size:1.5rem;font-weight:800;margin-bottom:8px;">${esc(ach.name)}</h3>
-          <p class="muted" style="font-size:13px;margin-bottom:20px;line-height:1.6;">${esc(ach.desc)}</p>
-          <div style="font-size:11px;color:${color};font-weight:700;margin-bottom:14px;">Categoria: ${esc(ach.category)}</div>
+          <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.12em;color:${color};margin-bottom:14px;">${isMedal ? '🎖️ Medalha Desbloqueada!' : '🏆 Conquista Desbloqueada!'}</div>
+          <div style="font-size:${isMedal?'5rem':'4rem'};margin-bottom:12px;animation:pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);${isMedal?'filter:drop-shadow(0 0 16px '+color+');':''}">${item.icon}</div>
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;padding:3px 10px;border-radius:999px;background:${color}22;color:${color};border:1px solid ${color}55;display:inline-block;margin-bottom:10px;">${label}</div>
+          <h3 style="font-size:1.6rem;font-weight:800;margin-bottom:8px;">${esc(item.name)}</h3>
+          <p class="muted" style="font-size:13px;margin-bottom:20px;line-height:1.65;">${esc(item.desc)}</p>
           ${remaining > 0
-            ? `<button class="btn btn-main" style="width:100%;padding:13px;" onclick="advanceUnlock()">Proxima (${remaining} restante${remaining>1?'s':''}) →</button>`
-            : `<button class="btn btn-main" style="width:100%;padding:13px;" onclick="advanceUnlock()">🎉 Incrivel!</button>`
+            ? `<div style="font-size:11px;color:var(--ink-muted);margin-bottom:10px;">${remaining} conquista${remaining>1?'s':''} aguardando...</div>
+               <button class="btn btn-main" style="width:100%;padding:13px;font-size:0.95rem;" onclick="advanceUnlock()">Proxima →</button>`
+            : `<button class="btn btn-main" style="width:100%;padding:14px;font-size:1rem;" onclick="advanceUnlock()">🎉 Incrivel! Obrigado!</button>`
           }
         </div>`;
-      spawnConfetti(box, ach.rarity);
+      spawnConfetti(box, isMedal ? 'lendario' : item.rarity);
       document.getElementById('ach-unlock-modal').classList.add('show');
     }
 
@@ -2733,18 +2951,71 @@
     async function renderAchievementsTab() {
       const unlocked = await getUnlockedIds(currentPlayer);
       _cachedUnlockedIds = new Set(unlocked.map(u => u.achievement_id));
-      const total = ACHIEVEMENTS.length;
-      const count = _cachedUnlockedIds.size;
-      const pct = total > 0 ? Math.round(count / total * 100) : 0;
+      const unlockedIds = [..._cachedUnlockedIds];
+
+      // XP and level
+      const xp = computeXP(unlockedIds);
+      const { level, next, pct: xpPct, idx: lvlIdx } = getLevelInfo(xp);
+
+      const achTotal = ACHIEVEMENTS.length;
+      const achCount = ACHIEVEMENTS.filter(a => _cachedUnlockedIds.has(a.id)).length;
+      const medTotal = MEDALS.length;
+      const medCount = MEDALS.filter(m => _cachedUnlockedIds.has(m.id)).length;
+      const achPct = achTotal > 0 ? Math.round(achCount / achTotal * 100) : 0;
 
       document.getElementById('ach-summary-bar').innerHTML = `
-        <div class="ach-stat-badge"><strong style="font-size:1.3rem;color:#a78bfa;">${count}</strong><br><small class="muted">Desbloqueadas</small></div>
-        <div class="ach-stat-badge"><strong style="font-size:1.3rem;">${total}</strong><br><small class="muted">Total</small></div>
-        <div class="ach-stat-badge"><strong style="font-size:1.3rem;color:#f59e0b;">${pct}%</strong><br><small class="muted">Completo</small></div>
-        <div style="flex:1;min-width:120px;">
-          <div class="bar" style="height:6px;"><span style="width:${pct}%;background:linear-gradient(90deg,#7c3aed,#c026d3);"></span></div>
-          <div class="muted" style="font-size:11px;margin-top:4px;">${count} / ${total} conquistas</div>
+        <div style="width:100%;margin-bottom:14px;padding:16px;border-radius:16px;border:1px solid ${level.border};background:${level.bg};">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <div style="font-size:2.5rem;">${level.icon}</div>
+            <div style="flex:1;min-width:140px;">
+              <div style="font-size:1.25rem;font-weight:800;color:${level.color};">${level.name}</div>
+              <div class="muted" style="font-size:12px;">Nivel ${lvlIdx+1} · ${xp} XP total</div>
+              <div class="xp-bar-wrap">
+                <div class="xp-bar"><span style="width:${xpPct}%;background:linear-gradient(90deg,${level.color},${next.color});"></span></div>
+                <div class="muted" style="font-size:10px;margin-top:3px;">${xp} / ${next.min === Infinity ? '∞' : next.min} XP para <strong style="color:${next.color};">${next.name}</strong></div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:1.4rem;font-weight:800;color:#a78bfa;">${achCount}<span style="font-size:0.8rem;color:var(--ink-muted);">/${achTotal}</span></div>
+              <div class="muted" style="font-size:11px;">Conquistas</div>
+            </div>
+            <div style="text-align:right;">
+              <div style="font-size:1.4rem;font-weight:800;color:#f59e0b;">${medCount}<span style="font-size:0.8rem;color:var(--ink-muted);">/${medTotal}</span></div>
+              <div class="muted" style="font-size:11px;">Medalhas</div>
+            </div>
+          </div>
+          <div class="bar" style="margin-top:10px;height:5px;"><span style="width:${achPct}%;background:linear-gradient(90deg,#7c3aed,#c026d3);"></span></div>
+          <div class="muted" style="font-size:10px;margin-top:3px;">${achPct}% das conquistas desbloqueadas</div>
         </div>`;
+
+      // Medals section
+      const tierLabels2 = { bronze:'Bronze',silver:'Prata',gold:'Ouro',platinum:'Platina',diamond:'Diamante',legend:'Lenda' };
+      const tierColors2 = { bronze:'#b46428',silver:'#c0c0c0',gold:'#f59e0b',platinum:'#06b6d4',diamond:'#a855f7',legend:'#ef4444' };
+      const medHTML = `<div class="section-title" style="margin-bottom:10px;">🎖️ Medalhas (${medCount}/${medTotal})</div>
+        <div class="medal-grid" style="margin-bottom:22px;">
+          ${MEDALS.map(m => {
+            const ul = _cachedUnlockedIds.has(m.id);
+            return `<div class="medal-card ${m.tier} ${ul?'':'locked'}">
+              <div class="medal-icon">${ul ? m.icon : '🔒'}</div>
+              <div style="flex:1;min-width:0;">
+                <span class="medal-tier-badge medal-tier-${m.tier}">${tierLabels2[m.tier]}</span>
+                <div style="font-weight:800;font-size:0.88rem;margin-bottom:3px;">${ul ? esc(m.name) : '???'}</div>
+                <div class="muted" style="font-size:11px;line-height:1.5;">${esc(m.desc)}</div>
+              </div>
+              ${ul ? `<div style="font-size:1.1rem;">✅</div>` : ''}
+            </div>`;
+          }).join('')}
+        </div>`;
+
+      // Insert medals before ach-filter-bar (we'll use a wrapper div)
+      const summaryEl = document.getElementById('ach-summary-bar');
+      let medEl = document.getElementById('ach-medals-section');
+      if (!medEl) {
+        medEl = document.createElement('div');
+        medEl.id = 'ach-medals-section';
+        summaryEl.parentNode.insertBefore(medEl, summaryEl.nextSibling);
+      }
+      medEl.innerHTML = medHTML;
 
       const rarities = ['comum','incomum','raro','epico','lendario','mitico'];
       const rarityEmojis = { comum:'⚪',incomum:'🟢',raro:'🔵',epico:'🟣',lendario:'🟡',mitico:'🔴' };
@@ -2788,8 +3059,9 @@
           <div class="ach-icon">${unlocked ? ach.icon : '🔒'}</div>
           <div style="flex:1;min-width:0;">
             <span class="rarity-label rarity-${ach.rarity}">${rarityLabels[ach.rarity]}</span>
-            <div style="font-weight:800;font-size:0.9rem;margin-bottom:3px;${unlocked?'':'filter:blur(0);'}">${esc(ach.name)}</div>
-            <div class="muted" style="font-size:11px;line-height:1.5;">${unlocked ? esc(ach.desc) : '???'}</div>
+            <div style="font-weight:800;font-size:0.9rem;margin-bottom:3px;">${unlocked ? esc(ach.name) : '<span style="opacity:0.5;">???</span>'}</div>
+            <div class="muted" style="font-size:11px;line-height:1.5;">${esc(ach.desc)}</div>
+            ${!unlocked ? `<div class="ach-req">🎯 ${esc(ach.desc)}</div>` : ''}
             <div style="font-size:10px;margin-top:4px;color:var(--ink-muted);">${esc(ach.category)}</div>
           </div>
           ${unlocked ? '<div style="font-size:1rem;flex-shrink:0;">✅</div>' : ''}
@@ -2822,7 +3094,7 @@
     async function openPlayerProfile(username) {
       document.getElementById('profile-modal').classList.add('show');
       document.getElementById('profile-username').textContent = username;
-      document.getElementById('profile-since').textContent = 'Carregando perfil...';
+      document.getElementById('profile-since').textContent = 'Carregando...';
       document.getElementById('profile-stats-area').innerHTML = '<p class="muted" style="text-align:center;padding:20px 0;">Carregando...</p>';
       document.getElementById('profile-ach-area').innerHTML = '';
       document.getElementById('profile-medals').innerHTML = '';
@@ -2830,32 +3102,81 @@
       const [stats, unlockedRows] = await Promise.all([computePlayerStats(username), getUnlockedIds(username)]);
       const unlockedSet = new Set(unlockedRows.map(u => u.achievement_id));
       const unlockedAchs = ACHIEVEMENTS.filter(a => unlockedSet.has(a.id));
+      const unlockedMeds = MEDALS.filter(m => unlockedSet.has(m.id));
+      const allUnlockedIds = [...unlockedSet];
 
-      const totalChallenges = stats.challengesParticipated;
-      const winRate = totalChallenges > 0 ? Math.round(stats.wins / totalChallenges * 100) : 0;
+      // XP & Level
+      const xp = computeXP(allUnlockedIds);
+      const { level, next, pct: xpPct, idx: lvlIdx } = getLevelInfo(xp);
+      const winRate = stats.challengesParticipated > 0 ? Math.round(stats.wins / stats.challengesParticipated * 100) : 0;
 
-      // Rank badge
-      const rankLabel = stats.wins >= 100 ? '👑 Lenda' : stats.wins >= 50 ? '⚡ Mestre' : stats.wins >= 25 ? '🏆 Veterano' : stats.wins >= 10 ? '🥇 Experiente' : stats.wins >= 5 ? '🥈 Aspirante' : stats.wins >= 1 ? '🥉 Iniciante' : '🎮 Novato';
-      document.getElementById('profile-rank-badge').textContent = rankLabel;
-      document.getElementById('profile-since').textContent = `${unlockedAchs.length} conquistas desbloqueadas · ${stats.challengesParticipated} desafios`;
-
-      // Avatar based on rank
-      const avatarEmoji = stats.wins >= 50 ? '👑' : stats.wins >= 25 ? '🏆' : stats.wins >= 10 ? '⚔️' : stats.wins >= 1 ? '🎮' : '🌱';
+      // Avatar
+      const avatarEmoji = stats.wins >= 100 ? '🌌' : stats.wins >= 50 ? '👑' : stats.wins >= 25 ? '🏆' : stats.wins >= 10 ? '⚔️' : stats.wins >= 1 ? '🎮' : '🌱';
       document.getElementById('profile-avatar').textContent = avatarEmoji;
+      document.getElementById('profile-rank-badge').textContent = level.icon + ' ' + level.name + ' · Nv.' + (lvlIdx + 1);
+      document.getElementById('profile-rank-badge').style.cssText = `font-size:10px;background:${level.bg};border-color:${level.border};color:${level.color};`;
+      document.getElementById('profile-since').innerHTML = `
+        <span>${unlockedAchs.length} conquistas · ${unlockedMeds.length} medalhas · ${xp} XP</span>`;
 
-      // Featured medals (top rarity unlocked)
-      const rarityOrder = ['mitico','lendario','epico','raro','incomum','comum'];
-      const featuredAchs = [...unlockedAchs].sort((a,b) => rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity)).slice(0, 5);
-      const rarityColors2 = { comum:'rgba(156,163,175,0.15)',incomum:'rgba(34,197,94,0.15)',raro:'rgba(59,130,246,0.15)',epico:'rgba(168,85,247,0.15)',lendario:'rgba(245,158,11,0.15)',mitico:'rgba(239,68,68,0.15)' };
-      const rarityBorders = { comum:'rgba(156,163,175,0.4)',incomum:'rgba(34,197,94,0.4)',raro:'rgba(59,130,246,0.4)',epico:'rgba(168,85,247,0.4)',lendario:'rgba(245,158,11,0.4)',mitico:'rgba(239,68,68,0.5)' };
-      document.getElementById('profile-medals').innerHTML = featuredAchs.length > 0
-        ? featuredAchs.map(a => `<div class="medal-chip" title="${esc(a.desc)}" style="background:${rarityColors2[a.rarity]};border-color:${rarityBorders[a.rarity]};">${a.icon} ${esc(a.name)}</div>`).join('')
-        : '<span class="muted" style="font-size:12px;">Sem conquistas ainda.</span>';
+      // XP bar under header
+      const xpBarHTML = `
+        <div class="xp-bar-wrap" style="margin-top:10px;">
+          <div class="xp-bar"><span style="width:${xpPct}%;background:linear-gradient(90deg,${level.color},${next.color});"></span></div>
+          <div class="muted" style="font-size:10px;margin-top:3px;">${xp} / ${next.min === Infinity ? '∞' : next.min} XP → <span style="color:${next.color};">${next.icon} ${next.name}</span></div>
+        </div>`;
 
-      // Stats grid
+      // Featured items from localStorage
+      const featured = getProfileFeatured(username);
+      const featuredAchObjs = featured.achs.map(id => ACH_MAP[id]).filter(Boolean);
+      const featuredMedObjs = featured.medals.map(id => MEDAL_MAP[id]).filter(Boolean);
+
+      // If no custom featured, show top rarity
+      const ro = ['mitico','lendario','epico','raro','incomum','comum'];
+      const defaultFeatAchs = featuredAchObjs.length > 0 ? featuredAchObjs
+        : [...unlockedAchs].sort((a,b)=>ro.indexOf(a.rarity)-ro.indexOf(b.rarity)).slice(0,3);
+      const tierOrder = ['legend','diamond','platinum','gold','silver','bronze'];
+      const defaultFeatMeds = featuredMedObjs.length > 0 ? featuredMedObjs
+        : [...unlockedMeds].sort((a,b)=>tierOrder.indexOf(a.tier)-tierOrder.indexOf(b.tier)).slice(0,3);
+
+      const rarityBgMap  = { comum:'rgba(156,163,175,0.14)',incomum:'rgba(34,197,94,0.14)',raro:'rgba(59,130,246,0.14)',epico:'rgba(168,85,247,0.14)',lendario:'rgba(245,158,11,0.14)',mitico:'rgba(239,68,68,0.14)' };
+      const rarityBdMap  = { comum:'rgba(156,163,175,0.4)',incomum:'rgba(34,197,94,0.4)',raro:'rgba(59,130,246,0.4)',epico:'rgba(168,85,247,0.4)',lendario:'rgba(245,158,11,0.4)',mitico:'rgba(239,68,68,0.5)' };
+      const tierBgMap    = { bronze:'rgba(180,100,40,0.14)',silver:'rgba(192,192,192,0.14)',gold:'rgba(245,158,11,0.14)',platinum:'rgba(6,182,212,0.14)',diamond:'rgba(168,85,247,0.14)',legend:'rgba(239,68,68,0.18)' };
+      const tierBdMap    = { bronze:'rgba(180,100,40,0.55)',silver:'rgba(192,192,192,0.5)',gold:'rgba(245,158,11,0.55)',platinum:'rgba(6,182,212,0.55)',diamond:'rgba(168,85,247,0.6)',legend:'rgba(239,68,68,0.7)' };
+
+      const featuredHTML = [
+        ...(defaultFeatAchs.length ? [`<div class="muted" style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">⭐ Em Destaque</div>`] : []),
+        ...defaultFeatAchs.map(a=>`<div class="medal-chip" title="${esc(a.desc)}" style="background:${rarityBgMap[a.rarity]};border-color:${rarityBdMap[a.rarity]};">${a.icon} <span style="font-size:0.75rem;">${esc(a.name)}</span></div>`),
+        ...defaultFeatMeds.map(m=>`<div class="medal-chip" title="${esc(m.desc)}" style="background:${tierBgMap[m.tier]};border-color:${tierBdMap[m.tier]};">${m.icon} <span style="font-size:0.75rem;">${esc(m.name)}</span></div>`),
+      ];
+      document.getElementById('profile-medals').innerHTML = featuredHTML.join('') || '<span class="muted" style="font-size:12px;">Sem itens em destaque ainda.</span>';
+
+      // Show edit button only for own profile
+      const isOwn = username === currentPlayer;
+      let editBtn = document.getElementById('profile-edit-btn');
+      if (!editBtn) {
+        editBtn = document.createElement('button');
+        editBtn.id = 'profile-edit-btn';
+        editBtn.className = 'btn btn-flat';
+        editBtn.style.cssText = 'padding:6px 12px;font-size:12px;flex-shrink:0;';
+        document.getElementById('profile-rank-badge').parentElement.parentElement.appendChild(editBtn);
+      }
+      editBtn.textContent = isOwn ? '✏️ Personalizar' : '';
+      editBtn.style.display = isOwn ? '' : 'none';
+      editBtn.onclick = () => openPickModal(username, unlockedAchs, unlockedMeds);
+
+      // Append XP bar to header
+      let xpEl = document.getElementById('profile-xp-bar');
+      if (!xpEl) {
+        xpEl = document.createElement('div');
+        xpEl.id = 'profile-xp-bar';
+        document.querySelector('.profile-header').appendChild(xpEl);
+      }
+      xpEl.innerHTML = xpBarHTML;
+
+      // Stats
       document.getElementById('profile-stats-area').innerHTML = `
         <h4 class="section-title">📊 Estatisticas</h4>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;">
           <div class="stat"><strong style="color:#10b981;">${stats.wins}</strong><small class="muted">Vitorias</small></div>
           <div class="stat"><strong style="color:#f43f5e;">${stats.losses}</strong><small class="muted">Derrotas</small></div>
           <div class="stat"><strong style="color:#f59e0b;">${stats.draws}</strong><small class="muted">Empates</small></div>
@@ -2864,33 +3185,120 @@
           <div class="stat"><strong>${stats.winStreak}</strong><small class="muted">Melhor Streak</small></div>
         </div>
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;">
-          <div class="stat"><strong class="mono" style="color:${stats.totalBalance>=0?'#10b981':'#f43f5e'};font-size:0.95rem;">${formatSignedBRL(stats.totalBalance,true)}</strong><small class="muted">Saldo Total</small></div>
-          <div class="stat"><strong class="mono" style="font-size:0.95rem;">${stats.totalTransactions}</strong><small class="muted">Transacoes</small></div>
+          <div class="stat"><strong class="mono" style="color:${stats.totalBalance>=0?'#10b981':'#f43f5e'};font-size:0.9rem;">${formatSignedBRL(stats.totalBalance,true)}</strong><small class="muted">Saldo Total</small></div>
+          <div class="stat"><strong>${stats.totalTransactions}</strong><small class="muted">Transacoes</small></div>
           <div class="stat"><strong>${stats.attacksSent}</strong><small class="muted">Ataques Enviados</small></div>
-          <div class="stat"><strong>${stats.attacksReceived}</strong><small class="muted">Ataques Recebidos</small></div>
+          <div class="stat"><strong>${stats.attacksReceived}</strong><small class="muted">Recebidos</small></div>
         </div>`;
 
-      // Achievements section in profile
-      const rarityOrder2 = ['mitico','lendario','epico','raro','incomum','comum'];
-      const topAchs = [...unlockedAchs].sort((a,b) => rarityOrder2.indexOf(a.rarity) - rarityOrder2.indexOf(b.rarity)).slice(0, 12);
+      // Medals in profile
+      const tierLabels3 = { bronze:'Bronze',silver:'Prata',gold:'Ouro',platinum:'Platina',diamond:'Diamante',legend:'Lenda' };
+      const medProfileHTML = unlockedMeds.length === 0 ? '<p class="muted" style="font-size:13px;padding:12px 0;">Nenhuma medalha ainda. Continue jogando!</p>'
+        : `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;">${
+            unlockedMeds.map(m=>`<div class="medal-card ${m.tier}" style="padding:10px;">
+              <div class="medal-icon" style="width:40px;height:40px;font-size:1.4rem;">${m.icon}</div>
+              <div style="flex:1;min-width:0;"><span class="medal-tier-badge medal-tier-${m.tier}" style="font-size:8px;">${tierLabels3[m.tier]}</span><div style="font-weight:800;font-size:0.82rem;">${esc(m.name)}</div></div>
+            </div>`).join('')
+          }</div>`;
+
+      // Achievements in profile
+      const topAchs = [...unlockedAchs].sort((a,b)=>ro.indexOf(a.rarity)-ro.indexOf(b.rarity)).slice(0,12);
       document.getElementById('profile-ach-area').innerHTML = `
-        <h4 class="section-title">🏆 Conquistas (${unlockedAchs.length}/${ACHIEVEMENTS.length})</h4>
-        ${unlockedAchs.length === 0 ? '<p class="muted" style="font-size:13px;text-align:center;padding:16px 0;">Nenhuma conquista ainda — comece a jogar!</p>' : `
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;">
-          ${topAchs.map(a => `
-            <div class="ach-card rarity-${a.rarity} unlocked" style="padding:10px;">
-              <div class="ach-icon" style="width:36px;height:36px;font-size:1.1rem;">${a.icon}</div>
-              <div style="flex:1;min-width:0;">
-                <div style="font-weight:800;font-size:0.82rem;">${esc(a.name)}</div>
-                <span class="rarity-label rarity-${a.rarity}" style="font-size:8px;">${a.rarity}</span>
-              </div>
-            </div>`).join('')}
-        </div>
-        ${unlockedAchs.length > 12 ? `<p class="muted" style="font-size:12px;text-align:center;margin-top:8px;">+${unlockedAchs.length-12} conquistas no total</p>` : ''}`}`;
+        <h4 class="section-title">🎖️ Medalhas (${unlockedMeds.length}/${MEDALS.length})</h4>
+        ${medProfileHTML}
+        <h4 class="section-title" style="margin-top:18px;">🏆 Conquistas (${unlockedAchs.length}/${ACHIEVEMENTS.length})</h4>
+        ${unlockedAchs.length === 0
+          ? '<p class="muted" style="font-size:13px;text-align:center;padding:14px 0;">Nenhuma conquista desbloqueada ainda!</p>'
+          : `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;">
+               ${topAchs.map(a=>`<div class="ach-card rarity-${a.rarity} unlocked" style="padding:10px;">
+                 <div class="ach-icon" style="width:34px;height:34px;font-size:1rem;">${a.icon}</div>
+                 <div style="flex:1;min-width:0;">
+                   <div style="font-weight:800;font-size:0.8rem;">${esc(a.name)}</div>
+                   <span class="rarity-label rarity-${a.rarity}" style="font-size:8px;">${a.rarity}</span>
+                 </div></div>`).join('')}
+             </div>
+             ${unlockedAchs.length>12?`<p class="muted" style="font-size:11px;text-align:center;margin-top:8px;">+${unlockedAchs.length-12} conquistas no total</p>`:''}`
+        }`;
     }
 
     function closeProfileModal() {
       document.getElementById('profile-modal').classList.remove('show');
+    }
+
+    /* ═══════════════════════════════════════
+       PROFILE PICK MODAL (Featured 3+3)
+       ═══════════════════════════════════════ */
+
+    let _pickUsername = '';
+    let _pickedAchs = new Set();
+    let _pickedMeds = new Set();
+
+    function openPickModal(username, unlockedAchs, unlockedMeds) {
+      _pickUsername = username;
+      const saved = getProfileFeatured(username);
+      _pickedAchs = new Set(saved.achs);
+      _pickedMeds = new Set(saved.medals);
+      document.getElementById('pick-modal').classList.add('show');
+      renderPickGrid('ach', unlockedAchs);
+      renderPickGrid('med', unlockedMeds);
+      updatePickCounts();
+    }
+
+    function closePickModal() {
+      document.getElementById('pick-modal').classList.remove('show');
+    }
+
+    function renderPickGrid(type, items) {
+      const gridId = type === 'ach' ? 'pick-ach-grid' : 'pick-med-grid';
+      const picked = type === 'ach' ? _pickedAchs : _pickedMeds;
+      const rarityOrder = ['mitico','lendario','epico','raro','incomum','comum'];
+      const tierOrder   = ['legend','diamond','platinum','gold','silver','bronze'];
+      const sorted = [...items].sort((a,b) => {
+        if (type === 'ach') return rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity);
+        return tierOrder.indexOf(a.tier) - tierOrder.indexOf(b.tier);
+      });
+      document.getElementById(gridId).innerHTML = sorted.map(item => {
+        const sel = picked.has(item.id);
+        const sub = type === 'ach' ? item.rarity : item.tier;
+        return `<div class="pick-card ${sel?'selected':''}" id="pc-${item.id}" onclick="togglePickItem('${type}','${item.id}')">
+          <span style="font-size:1.4rem;">${item.icon}</span>
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:800;font-size:0.82rem;">${esc(item.name)}</div>
+            <div class="muted" style="font-size:10px;">${sub}</div>
+          </div>
+          ${sel ? '<span style="color:#a78bfa;font-size:1rem;">✓</span>' : ''}
+        </div>`;
+      }).join('');
+    }
+
+    function togglePickItem(type, id) {
+      const picked = type === 'ach' ? _pickedAchs : _pickedMeds;
+      if (picked.has(id)) {
+        picked.delete(id);
+      } else {
+        if (picked.size >= 3) { showToast('Limite de 3 itens em destaque!', '#f59e0b'); return; }
+        picked.add(id);
+      }
+      const el = document.getElementById('pc-' + id);
+      if (el) {
+        el.classList.toggle('selected', picked.has(id));
+        const check = el.querySelector('span:last-child');
+        if (picked.has(id)) { if (!check || check.textContent !== '✓') el.innerHTML += '<span style="color:#a78bfa;font-size:1rem;">✓</span>'; }
+        else { if (check && check.textContent === '✓') check.remove(); }
+      }
+      updatePickCounts();
+    }
+
+    function updatePickCounts() {
+      document.getElementById('pick-ach-count').textContent = `(${_pickedAchs.size}/3)`;
+      document.getElementById('pick-med-count').textContent = `(${_pickedMeds.size}/3)`;
+    }
+
+    function savePickedProfile() {
+      saveProfileFeaturedLocal(_pickUsername, { achs:[..._pickedAchs], medals:[..._pickedMeds] });
+      closePickModal();
+      showToast('Perfil personalizado salvo!', '#059669');
+      openPlayerProfile(_pickUsername);
     }
 
     document.getElementById('login-pass').addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });
