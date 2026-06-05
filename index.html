@@ -742,6 +742,155 @@
       .arena-grid { grid-template-columns: 1fr; }
       .fighter.big { grid-column: auto; }
     }
+
+    /* ── HUB TABS ── */
+    .hub-tabs { display:flex; gap:8px; margin-bottom:16px; }
+    .hub-tab-btn {
+      border:1px solid var(--line); border-radius:12px; padding:9px 18px;
+      color:var(--ink-muted); font-weight:800; font-size:0.85rem; cursor:pointer;
+      background:rgba(255,255,255,0.04); transition:all 0.18s; white-space:nowrap;
+    }
+    .hub-tab-btn.active {
+      background:linear-gradient(135deg,#7c3aed,#c026d3);
+      border-color:rgba(124,58,237,0.6); color:#fff;
+      box-shadow:0 0 18px rgba(124,58,237,0.35);
+    }
+    .hub-tab-btn:hover:not(.active){ background:rgba(255,255,255,0.09); color:var(--ink); }
+
+    /* ── ACHIEVEMENT CARDS ── */
+    .ach-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:10px;
+    }
+    .ach-card {
+      border-radius:14px; border:1px solid var(--line); padding:14px;
+      background:rgba(255,255,255,0.025); display:flex; gap:12px;
+      align-items:flex-start; position:relative; overflow:hidden; transition:all 0.2s;
+    }
+    .ach-card.locked { opacity:0.38; filter:grayscale(0.7); }
+    .ach-card.unlocked { animation:slide-in 0.3s ease; }
+    .ach-card.rarity-incomum.unlocked { border-color:rgba(34,197,94,0.45); box-shadow:0 0 10px rgba(34,197,94,0.1); }
+    .ach-card.rarity-raro.unlocked   { border-color:rgba(59,130,246,0.5);  box-shadow:0 0 12px rgba(59,130,246,0.14); }
+    .ach-card.rarity-epico.unlocked  { border-color:rgba(168,85,247,0.6);  box-shadow:0 0 16px rgba(168,85,247,0.2); }
+    .ach-card.rarity-lendario.unlocked{ border-color:rgba(245,158,11,0.6); box-shadow:0 0 20px rgba(245,158,11,0.2); }
+    .ach-card.rarity-mitico.unlocked { border-color:rgba(239,68,68,0.7);   box-shadow:0 0 26px rgba(239,68,68,0.28); animation:mythic-glow 2s ease-in-out infinite; }
+
+    @keyframes mythic-glow {
+      0%,100%{ box-shadow:0 0 18px rgba(239,68,68,0.2); }
+      50%{ box-shadow:0 0 38px rgba(239,68,68,0.5),0 0 60px rgba(124,58,237,0.2); }
+    }
+
+    .ach-icon {
+      width:46px; height:46px; border-radius:12px; display:grid; place-items:center;
+      font-size:1.5rem; flex-shrink:0; background:rgba(255,255,255,0.06);
+    }
+    .rarity-comum    .ach-icon{ background:rgba(156,163,175,0.14); }
+    .rarity-incomum  .ach-icon{ background:rgba(34,197,94,0.14); }
+    .rarity-raro     .ach-icon{ background:rgba(59,130,246,0.14); }
+    .rarity-epico    .ach-icon{ background:rgba(168,85,247,0.14); }
+    .rarity-lendario .ach-icon{ background:rgba(245,158,11,0.14); }
+    .rarity-mitico   .ach-icon{ background:rgba(239,68,68,0.14); }
+
+    .rarity-label { font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.09em; padding:2px 6px; border-radius:999px; display:inline-block; margin-bottom:3px; }
+    .rarity-comum    { color:#9ca3af; } .rarity-label.rarity-comum    { background:rgba(156,163,175,0.15); }
+    .rarity-incomum  { color:#22c55e; } .rarity-label.rarity-incomum  { background:rgba(34,197,94,0.15); }
+    .rarity-raro     { color:#3b82f6; } .rarity-label.rarity-raro     { background:rgba(59,130,246,0.15); }
+    .rarity-epico    { color:#a855f7; } .rarity-label.rarity-epico    { background:rgba(168,85,247,0.15); }
+    .rarity-lendario { color:#f59e0b; } .rarity-label.rarity-lendario { background:rgba(245,158,11,0.15); }
+    .rarity-mitico   { color:#ef4444; } .rarity-label.rarity-mitico   { background:rgba(239,68,68,0.15); }
+
+    .ach-filter-bar { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
+    .ach-filter-chip {
+      border:1px solid var(--line); border-radius:999px; padding:5px 12px;
+      font-size:11px; font-weight:700; background:rgba(255,255,255,0.04);
+      cursor:pointer; transition:all 0.15s; color:var(--ink-muted);
+      text-transform:uppercase; letter-spacing:0.06em;
+    }
+    .ach-filter-chip.active{ background:rgba(124,58,237,0.22); border-color:rgba(124,58,237,0.5); color:#a78bfa; }
+    .ach-filter-chip:hover:not(.active){ background:rgba(255,255,255,0.08); color:var(--ink); }
+
+    .ach-search {
+      flex:1; min-width:180px; border:1px solid var(--line); border-radius:999px;
+      padding:6px 14px; background:rgba(4,5,15,0.6); color:var(--ink);
+      font-size:12px; outline:none;
+    }
+    .ach-search:focus{ border-color:rgba(124,58,237,0.6); }
+
+    .ach-summary-bar {
+      display:flex; gap:10px; align-items:center; margin-bottom:14px; flex-wrap:wrap;
+    }
+    .ach-stat-badge {
+      border:1px solid var(--line); border-radius:10px; padding:8px 14px;
+      background:rgba(255,255,255,0.03); text-align:center; min-width:80px;
+    }
+
+    /* ── PROFILE MODAL ── */
+    .profile-box {
+      width:min(96vw,740px); max-height:90vh; display:flex; flex-direction:column;
+      border-radius:24px; border:1px solid var(--line-2); background:#080b1a;
+      overflow:hidden; box-shadow:0 32px 80px rgba(0,0,0,0.75),0 0 0 1px rgba(124,58,237,0.14);
+    }
+    .profile-header {
+      padding:24px; border-bottom:1px solid var(--line); flex-shrink:0;
+      background:linear-gradient(135deg,rgba(124,58,237,0.12),rgba(192,38,211,0.07));
+    }
+    .profile-avatar {
+      width:68px; height:68px; border-radius:20px; display:grid; place-items:center;
+      font-size:2rem; flex-shrink:0;
+      background:linear-gradient(135deg,#7c3aed,#c026d3);
+      box-shadow:0 0 24px rgba(124,58,237,0.4);
+    }
+    .profile-body { overflow-y:auto; flex:1; padding:20px 24px; scrollbar-width:thin; scrollbar-color:var(--line) transparent; }
+
+    .medal-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+    .medal-chip {
+      border-radius:10px; padding:6px 10px; display:flex; gap:6px; align-items:center;
+      font-size:0.78rem; font-weight:700; cursor:pointer; transition:transform 0.15s;
+      border:1px solid var(--line);
+    }
+    .medal-chip:hover{ transform:scale(1.06); }
+
+    /* ── UPDATE MODAL ── */
+    .update-box {
+      width:min(92vw,500px); border-radius:28px;
+      border:1px solid rgba(124,58,237,0.5);
+      background:radial-gradient(ellipse at top,rgba(124,58,237,0.28) 0%,#080b1a 58%);
+      padding:32px 26px; text-align:center;
+      box-shadow:0 0 60px rgba(124,58,237,0.28),0 32px 80px rgba(0,0,0,0.7);
+      animation:modal-pop 0.45s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    .update-feature { display:flex; align-items:flex-start; gap:10px; text-align:left; padding:8px 0; border-bottom:1px solid var(--line); font-size:13px; }
+    .update-feature:last-child{ border-bottom:0; }
+
+    /* ── ACHIEVEMENT UNLOCK MODAL ── */
+    .unlock-box {
+      width:min(92vw,460px); border-radius:28px; overflow:hidden;
+      animation:modal-pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);
+    }
+    .unlock-inner { padding:32px 26px; text-align:center; position:relative; overflow:hidden; }
+
+    @keyframes modal-pop {
+      from{ opacity:0; transform:scale(0.82) translateY(18px); }
+      to  { opacity:1; transform:scale(1) translateY(0); }
+    }
+    @keyframes float-up {
+      0%  { opacity:1; transform:translateY(0) rotate(0deg); }
+      100%{ opacity:0; transform:translateY(-60px) rotate(30deg); }
+    }
+    .confetti { position:absolute; pointer-events:none; border-radius:3px; animation:float-up 1.4s ease-out forwards; }
+
+    .unlock-comum   { border:1px solid rgba(156,163,175,0.5); background:radial-gradient(ellipse at top,rgba(156,163,175,0.18) 0%,#080b1a 55%); }
+    .unlock-incomum { border:1px solid rgba(34,197,94,0.5);   background:radial-gradient(ellipse at top,rgba(34,197,94,0.2) 0%,#080b1a 55%); }
+    .unlock-raro    { border:1px solid rgba(59,130,246,0.5);   background:radial-gradient(ellipse at top,rgba(59,130,246,0.22) 0%,#080b1a 55%); }
+    .unlock-epico   { border:1px solid rgba(168,85,247,0.6);   background:radial-gradient(ellipse at top,rgba(168,85,247,0.28) 0%,#080b1a 55%); }
+    .unlock-lendario{ border:1px solid rgba(245,158,11,0.6);   background:radial-gradient(ellipse at top,rgba(245,158,11,0.24) 0%,#080b1a 55%); }
+    .unlock-mitico  { border:1px solid rgba(239,68,68,0.7);    background:radial-gradient(ellipse at top,rgba(239,68,68,0.3) 0%,rgba(124,58,237,0.12) 38%,#080b1a 60%); }
+
+    .rank-item.clickable { cursor:pointer; }
+    .rank-item.clickable:hover { border-color:rgba(124,58,237,0.5); box-shadow:0 0 12px rgba(124,58,237,0.15); }
+    .rank-champ.clickable { cursor:pointer; transition:box-shadow 0.2s; }
+    .rank-champ.clickable:hover { box-shadow:0 0 30px rgba(245,158,11,0.2); }
+
+    @media (max-width:820px){ .ach-grid{ grid-template-columns:1fr; } }
   </style>
   <script>
     const SUPABASE_URL = 'https://jydmnydlfynktydngjmj.supabase.co';
@@ -821,6 +970,29 @@
           </div>
         </header>
 
+        <div class="hub-tabs">
+          <button id="tab-arena" class="hub-tab-btn active" onclick="switchHubTab('arena')">⚔️ Arena</button>
+          <button id="tab-conquistas" class="hub-tab-btn" onclick="switchHubTab('conquistas')">🏆 Conquistas</button>
+        </div>
+
+        <!-- ══ CONQUISTAS TAB ══ -->
+        <div id="hub-conquistas" class="hidden">
+          <section class="glass" style="padding:20px;">
+            <div id="ach-summary-bar" class="ach-summary-bar"></div>
+            <div class="ach-filter-bar">
+              <input class="ach-search" id="ach-search" type="text" placeholder="🔍 Buscar conquista..." oninput="filterAchievements()">
+              <button class="ach-filter-chip active" id="chip-all" onclick="setAchFilter('all')">Todas</button>
+              <button class="ach-filter-chip" id="chip-unlocked" onclick="setAchFilter('unlocked')">✅ Desbloqueadas</button>
+              <button class="ach-filter-chip" id="chip-locked" onclick="setAchFilter('locked')">🔒 Bloqueadas</button>
+            </div>
+            <div class="ach-filter-bar" id="ach-rarity-chips" style="margin-top:-8px;"></div>
+            <div id="ach-grid" class="ach-grid"></div>
+            <p id="ach-empty" class="muted hidden" style="text-align:center;padding:24px 0;font-size:13px;">Nenhuma conquista encontrada.</p>
+          </section>
+        </div>
+
+        <!-- ══ ARENA TAB ══ -->
+        <div id="hub-arena">
         <div class="layout">
           <!-- LEFT -->
           <div>
@@ -877,6 +1049,7 @@
             </section>
           </div>
         </div>
+        </div><!-- /hub-arena -->
       </div>
     </section>
 
@@ -1051,9 +1224,183 @@
     </div>
   </div>
 
+  <!-- ══════════════ UPDATE MODAL ══════════════ -->
+  <div id="update-modal" class="modal" style="z-index:75;">
+    <div class="update-box">
+      <div style="font-size:3.6rem; margin-bottom:10px; animation:pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);">🎉</div>
+      <h2 id="update-title" class="display" style="font-size:2.2rem; margin-bottom:8px; background:linear-gradient(135deg,#fff 20%,#a78bfa 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;"></h2>
+      <p id="update-desc" class="muted" style="font-size:13px; margin-bottom:18px; line-height:1.65;"></p>
+      <div id="update-features" style="margin-bottom:22px; text-align:left;"></div>
+      <button class="btn btn-main" style="width:100%; padding:14px; font-size:1rem;" onclick="closeUpdateModal()">🚀 Explorar novidades!</button>
+    </div>
+  </div>
+
+  <!-- ══════════════ ACHIEVEMENT UNLOCK MODAL ══════════════ -->
+  <div id="ach-unlock-modal" class="modal" style="z-index:80;">
+    <div id="ach-unlock-box" class="unlock-box">
+      <!-- preenchido dinamicamente -->
+    </div>
+  </div>
+
+  <!-- ══════════════ PROFILE MODAL ══════════════ -->
+  <div id="profile-modal" class="modal" style="z-index:65;">
+    <div class="profile-box">
+      <div class="profile-header">
+        <div style="display:flex; gap:16px; align-items:flex-start;">
+          <div id="profile-avatar" class="profile-avatar">🎮</div>
+          <div style="flex:1; min-width:0;">
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+              <h2 id="profile-username" style="font-size:1.5rem; font-weight:800;"></h2>
+              <span id="profile-rank-badge" class="pill" style="font-size:10px;"></span>
+            </div>
+            <div id="profile-since" class="muted" style="font-size:12px; margin-top:3px;"></div>
+            <div id="profile-medals" class="medal-row"></div>
+          </div>
+          <button class="btn btn-flat" onclick="closeProfileModal()" style="padding:6px 12px; font-size:13px; flex-shrink:0;">✕</button>
+        </div>
+      </div>
+      <div class="profile-body">
+        <div id="profile-stats-area" style="margin-bottom:20px;"></div>
+        <div id="profile-ach-area"></div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const AUTH_REMEMBER_KEY = 'arena.rememberedUser';
     const AUTH_CURRENT_KEY = 'arena.currentUser';
+    const APP_VERSION = '2.0.0';
+    const VERSION_SEEN_KEY = 'arena.lastSeenVersion';
+
+    /* ═══════════════════════════════════════════════════════════
+       ACHIEVEMENTS — 1000+ conquistas geradas programaticamente
+       ═══════════════════════════════════════════════════════════ */
+    const ACHIEVEMENTS = (() => {
+      const list = [];
+      function a(id, name, desc, icon, rarity, category, cond) {
+        list.push({ id, name, desc, icon, rarity, category, condition: cond });
+      }
+      const R = n => n<=4?'comum':n<=20?'incomum':n<=100?'raro':n<=500?'epico':n<=2000?'lendario':'mitico';
+      const Rbal = n => n<500?'comum':n<5000?'incomum':n<50000?'raro':n<500000?'epico':n<5000000?'lendario':'mitico';
+      const balFmt = n => n<1000?`R$ ${n}`:`R$ ${n>=1e9?(n/1e9).toFixed(1)+'B':n>=1e6?(n/1e6).toFixed(n%1e6===0?0:1)+'M':(n/1000).toFixed(n%1000===0?0:1)+'k'}`;
+      const txIcon = n => n<=10?'📝':n<=50?'📊':n<=200?'💹':n<=1000?'🧮':'🌌';
+      const wIcon  = n => n<=5?'🏅':n<=20?'🥈':n<=50?'🥇':n<=150?'🏆':n<=500?'👑':'⚡';
+      const balIcon= n => n<1000?'💰':n<10000?'💵':n<1e6?'💳':n<1e9?'🤑':'🌌';
+
+      const txNames={1:'Primeiro Registro',2:'Par de Registros',3:'Trio Inicial',4:'Quarteto',5:'Alta de Cinco',6:'Sexteto',7:'Sete Lancamentos',8:'Oitava Entrada',9:'Nona Anotacao',10:'Dezena Completa',11:'Onze Passos',12:'Doze Movimentos',13:'Treze na Conta',14:'Catorze Registros',15:'Quinze Lancamentos',16:'Dezesseis',17:'Dezessete',18:'Dezoito Entradas',19:'Dezenove Anotacoes',20:'Vinte Paradas',25:'Vinte e Cinco',30:'Trinta Firmes',35:'Trinta e Cinco',40:'Quarenta',45:'Quarenta e Cinco',50:'Cinquenta Passos',60:'Sessenta',70:'Setenta',80:'Oitenta',90:'Noventa',100:'Centenario de Registros'};
+      for(let n=1;n<=100;n++) a(`tx_${n}`,txNames[n]||`${n} Registros`,`Adicione ${n} transacoe${n>1?'s':'ao'} no total.`,txIcon(n),R(n),'Transacoes',s=>s.totalTransactions>=n);
+      [110,120,130,140,150,175,200,250,300,350,400,450,500,600,700,750,1000,1500,2000,3000,5000,10000].forEach(n=>a(`tx_${n}`,`${n} Registros`,`Alcance ${n} transacoes totais.`,txIcon(n),R(n),'Transacoes',s=>s.totalTransactions>=n));
+
+      const winNames={1:'Primeira Vitoria',2:'Dupla de Ouro',3:'Hat Trick',4:'Quarteto Vencedor',5:'Alta de Cinco Vitorias',6:'Seis Conquistas',7:'Sete Batalhas Ganhas',8:'Oito Vitorias',9:'Nona Conquista',10:'Dez Vitorias',11:'Onze',12:'Doze Triunfos',13:'Treze',14:'Catorze',15:'Quinze Vitorias',16:'Dezesseis',17:'Dezessete Triunfos',18:'Dezoito',19:'Dezenove',20:'Vinte Vitorias',25:'Vinte e Cinco Conquistas',30:'Trinta Triunfos',35:'Trinta e Cinco',40:'Quarenta Vitorias',45:'Quarenta e Cinco',50:'Cinquenta Conquistas',60:'Sessenta Triunfos',70:'Setenta Vitorias',80:'Oitenta Conquistas',90:'Noventa',100:'Centenario de Vitorias'};
+      for(let n=1;n<=100;n++) a(`win_${n}`,winNames[n]||`${n} Vitorias`,`Venca ${n} desafio${n>1?'s':''}`,wIcon(n),R(n),'Vitorias',s=>s.wins>=n);
+      [110,120,130,140,150,175,200,250,300,500,750,1000].forEach(n=>a(`win_${n}`,`${n} Vitorias`,`Alcance ${n} vitorias.`,wIcon(n),R(n),'Vitorias',s=>s.wins>=n));
+
+      for(let n=1;n<=50;n++) a(`loss_${n}`,n===1?'Primeira Queda':n===5?'Cinco Tombos':n===10?'Dez Quedas':n===25?'Vinte e Cinco Tombos':`${n} Derrotas`,`Perca ${n} desafio${n>1?'s':''}. Persista!`,n<=3?'😤':n<=10?'💪':n<=25?'🥊':'🔥',n<=3?'comum':n<=10?'incomum':n<=25?'raro':'epico','Derrotas',s=>s.losses>=n);
+      [75,100,150,200].forEach(n=>a(`loss_${n}`,`${n} Tombos`,`Perca ${n} desafios.`,'🥊','lendario','Derrotas',s=>s.losses>=n));
+
+      for(let n=1;n<=30;n++) a(`draw_${n}`,n===1?'Primeiro Empate':n===5?'Cinco Empates':n===10?'Dez Empates':`${n} Empates`,`Empate em ${n} desafio${n>1?'s':''}`, '🤝',n<=2?'comum':n<=8?'incomum':n<=18?'raro':'epico','Empates',s=>s.draws>=n);
+      [35,40,50].forEach(n=>a(`draw_${n}`,`${n} Empates`,`Empate em ${n} desafios.`,'🤝','lendario','Empates',s=>s.draws>=n));
+
+      const pNames={1:'Primeira Batalha',2:'Dois Duelos',3:'Trio de Desafios',4:'Quatro Arenas',5:'Cinco Duelos',10:'Dez Confrontos',15:'Quinze Duelos',20:'Vinte Batalhas',25:'Veterano de 25',30:'Trinta Confrontos',50:'Meio Centenario',75:'Setenta e Cinco',100:'Centenario de Desafios'};
+      for(let n=1;n<=100;n++) a(`part_${n}`,pNames[n]||`${n} Desafios`,`Participe de ${n} desafio${n>1?'s':''}`,n<=5?'🎮':n<=20?'⚔️':n<=50?'🗡️':'🌟',R(n),'Desafios',s=>s.challengesParticipated>=n);
+      [125,150,200,300,500,1000].forEach(n=>a(`part_${n}`,`${n} Desafios`,`Participe de ${n} desafios.`,'🌟',R(n),'Desafios',s=>s.challengesParticipated>=n));
+
+      for(let n=1;n<=50;n++) a(`crt_${n}`,n===1?'Organizador':n===5?'Promotor':n===10?'Produtor':n===25?'Fundador':n===50?'Arquiteto':`${n} Criados`,`Crie ${n} desafio${n>1?'s':''}`,n<=3?'🎯':n<=10?'🎪':n<=25?'🏟️':'🌍',n<=3?'comum':n<=8?'incomum':n<=20?'raro':'epico','Criador',s=>s.challengesCreated>=n);
+      [75,100,200].forEach(n=>a(`crt_${n}`,`${n} Desafios Criados`,`Crie ${n} desafios.`,'🌍','lendario','Criador',s=>s.challengesCreated>=n));
+
+      const atkNames={1:'Primeiro Ataque',2:'Duplo Ataque',3:'Triple Zoeira',5:'Cinco Provocacoes',10:'Dez Ataques',15:'Quinze Zoeiras',20:'Vinte Provocacoes',25:'Mestre das Provocacoes',30:'Trinta Ataques',40:'Quarenta Zoeiras',50:'Meia Centena de Ataques',75:'Setenta e Cinco Zoeiras',100:'Cem Ataques'};
+      for(let n=1;n<=100;n++) a(`atk_${n}`,atkNames[n]||`${n} Ataques`,`Envie ${n} ataque${n>1?'s':''} de emoji.`,n<=5?'🐥':n<=15?'🤣':n<=40?'🧂':'🫵',R(n),'Provocador',s=>s.attacksSent>=n);
+      [125,150,200,300,500,1000].forEach(n=>a(`atk_${n}`,`${n} Ataques`,`Envie ${n} ataques.`,'💥',R(n),'Provocador',s=>s.attacksSent>=n));
+
+      for(let n=1;n<=50;n++) a(`recv_${n}`,n===1?'Alvo Principal':n===5?'Cinco Recebidos':n===10?'Dez Ataques Recebidos':n===25?'Vinte e Cinco':n===50?'Cinquenta Golpes':`${n} Recebidos`,`Receba ${n} ataque${n>1?'s':''}.`,n<=3?'😅':n<=10?'🛡️':n<=30?'💎':'👑',n<=3?'comum':n<=10?'incomum':n<=25?'raro':'epico','Alvo',s=>s.attacksReceived>=n);
+      [75,100,200].forEach(n=>a(`recv_${n}`,`${n} Ataques Recebidos`,`Seja alvo de ${n} ataques.`,'👑','lendario','Alvo',s=>s.attacksReceived>=n));
+
+      for(let n=2;n<=25;n++) a(`stk_${n}`,`Sequencia de ${n}`,`Venca ${n} desafios seguidos.`,n<=4?'🔥':n<=9?'⚡':n<=16?'💫':'🌟',n<=3?'incomum':n<=7?'raro':n<=15?'epico':'lendario','Sequencia',s=>s.winStreak>=n);
+      [30,40,50].forEach(n=>a(`stk_${n}`,`Sequencia de ${n}!`,`Venca ${n} sem parar.`,'👑','mitico','Sequencia',s=>s.winStreak>=n));
+
+      [10,25,50,75,100,150,200,300,400,500,600,700,800,900,1000,1200,1500,2000,2500,3000,4000,5000,7500,10000,15000,20000,30000,50000,75000,100000,150000,200000,300000,500000,750000,1000000,2000000,5000000,10000000,50000000,100000000,500000000,1000000000].forEach(n=>a(`bal_${n}`,`Saldo ${balFmt(n)}`,`Acumule saldo total de ${balFmt(n)}.`,balIcon(n),Rbal(n),'Saldo',s=>s.totalBalance>=n));
+
+      for(let n=1;n<=50;n++) a(`ent_${n}`,n===1?'Primeira Entrada':n===10?'Dez Entradas':n===25?'Vinte e Cinco Entradas':n===50?'Cinquenta Entradas':`${n} Entradas`,`Registre ${n} entrada${n>1?'s':''}`,n<=5?'📈':n<=20?'💹':'🚀',R(n),'Entradas',s=>s.totalEntradas>=n);
+      [75,100,150,200,300,500,1000].forEach(n=>a(`ent_${n}`,`${n} Entradas`,`Alcance ${n} entradas.`,'🚀',R(n),'Entradas',s=>s.totalEntradas>=n));
+
+      for(let n=1;n<=30;n++) a(`sai_${n}`,n===1?'Primeiro Gasto':n===10?'Dez Saidas':n===25?'Vinte e Cinco Saidas':`${n} Saidas`,`Registre ${n} saida${n>1?'s':''}`,n<=5?'📉':n<=15?'💸':'🔴',n<=3?'comum':n<=10?'incomum':n<=20?'raro':'epico','Saidas',s=>s.totalSaidas>=n);
+      [40,50,75,100,200].forEach(n=>a(`sai_${n}`,`${n} Saidas`,`Registre ${n} saidas.`,'💸',R(n),'Saidas',s=>s.totalSaidas>=n));
+
+      [10,50,100,250,500,1000,2500,5000,10000,25000,50000,100000,250000,500000,1000000,5000000,10000000,100000000,1000000000].forEach(n=>a(`entval_${n}`,`Entrada Total: ${balFmt(n)}`,`Acumule ${balFmt(n)} em entradas.`,'📈',Rbal(n),'Volume',s=>s.totalEntradasValue>=n));
+      [10,50,100,250,500,1000,5000,10000,50000,100000,1000000].forEach(n=>a(`saival_${n}`,`Saida Total: ${balFmt(n)}`,`Registre ${balFmt(n)} em saidas.`,'📉',Rbal(n),'Volume',s=>s.totalSaidasValue>=n));
+
+      // Desafios extras para completar 1000+
+      for(let n=21;n<=50;n++) a(`crt2_${n}`,`Criador de ${n}`,`Crie ${n} desafios.`,n<=30?'🏟️':'🌍','epico','Criador',s=>s.challengesCreated>=n);
+      for(let n=31;n<=50;n++) a(`stk2_${n}`,`Streak de ${n}`,`Venca ${n} seguidos.`,'⚡','mitico','Sequencia',s=>s.winStreak>=n);
+      for(let n=51;n<=75;n++) a(`recv2_${n}`,`${n} Recebidos`,`Receba ${n} ataques.`,'💎','lendario','Alvo',s=>s.attacksReceived>=n);
+      for(let n=51;n<=75;n++) a(`draw2_${n}`,`${n} Empates`,`Empate em ${n} desafios.`,'🤝','lendario','Empates',s=>s.draws>=n);
+      // Milestones de Win Rate em intervalos menores
+      [52,54,56,58,62,64,66,68,72,74,76,78,82,84,86,88,92,94,96,98].forEach(p=>a(`wr2_${p}`,`Win Rate ${p}%`,`Alcance ${p}% de WR (min 10 desafios).`,'📊',p<70?'raro':p<85?'epico':'lendario','Taxa',s=>s.challengesParticipated>=10&&(s.wins/s.challengesParticipated*100)>=p));
+      // Bonus milestones de tx em intervalos menores
+      [102,104,106,108,112,114,116,118].forEach(n=>a(`tx2_${n}`,`${n} Registros`,`Alcance ${n} transacoes.`,txIcon(n),'raro','Transacoes',s=>s.totalTransactions>=n));
+      // Win em slots com mais granularidade (21-25)
+      for(let n=21;n<=25;n++) {a(`p1w2_${n}`,`${n} Vit. Criador`,`${n} vitorias como criador.`,'🎯','epico','Especialista',s=>s.winsAsP1>=n); a(`p2w2_${n}`,`${n} Vit. Invasor`,`${n} vitorias como invasor.`,'⚡','epico','Especialista',s=>s.winsAsP2>=n);}
+
+      for(let n=1;n<=20;n++) a(`p1w_${n}`,n===1?'Rei da Casa':`${n} Vitorias (Criador)`,`Venca ${n} vez${n>1?'es':''} como criador (P1).`,'🎯',n<=3?'incomum':n<=10?'raro':'epico','Especialista',s=>s.winsAsP1>=n);
+      [25,30,50,100].forEach(n=>a(`p1w_${n}`,`${n} Vitorias como Criador`,`Domine ${n} como criador.`,'🎯','lendario','Especialista',s=>s.winsAsP1>=n));
+      for(let n=1;n<=20;n++) a(`p2w_${n}`,n===1?'Invasao Bem Sucedida':`${n} Vitorias (Invasor)`,`Venca ${n} vez${n>1?'es':''} como invasor (P2).`,'⚡',n<=3?'incomum':n<=10?'raro':'epico','Especialista',s=>s.winsAsP2>=n);
+      [25,30,50,100].forEach(n=>a(`p2w_${n}`,`${n} Vitorias como Invasor`,`Domine ${n} como invasor.`,'⚡','lendario','Especialista',s=>s.winsAsP2>=n));
+
+      [50,55,60,65,70,75,80,85,90,95,100].forEach(p=>a(`wr_${p}`,`Taxa ${p}%`,`Win rate de ${p}%+ (min 5 desafios).`,p<70?'📊':p<90?'🎯':'💎',p<60?'incomum':p<75?'raro':p<90?'epico':'lendario','Taxa',s=>s.challengesParticipated>=5&&(s.wins/s.challengesParticipated*100)>=p));
+
+      // Perfeicao (sem derrotas, min X desafios)
+      [3,5,7,10,15,20,30,50].forEach(n=>a(`perf_${n}`,`Invicto em ${n}`,`${n} desafios finalizados sem derrota.`,'🕊️',n<=5?'epico':'lendario','Perfeito',s=>(s.wins+s.draws)>=n&&s.losses===0));
+
+      // Combos epicos
+      a('both_slots','Ambidestro','Venca 1 como criador e 1 como invasor.','🤺','raro','Especial',s=>s.winsAsP1>=1&&s.winsAsP2>=1);
+      a('all_results','Completo','Tenha vitoria, derrota e empate.','🎭','raro','Especial',s=>s.wins>=1&&s.losses>=1&&s.draws>=1);
+      a('more_wins','Saldo Positivo','Mais vitorias que derrotas (min 3 jogos).','⚖️','incomum','Especial',s=>s.wins>s.losses&&s.challengesParticipated>=3);
+      a('atk_and_win','Melhor Vinganca','Envie ataque E venca.','💀','incomum','Especial',s=>s.attacksSent>=1&&s.wins>=1);
+      a('recv_and_win','Inabalavel','Receba ataque e venca mesmo assim.','🛡️','raro','Especial',s=>s.attacksReceived>=1&&s.wins>=1);
+      a('creator_joiner','Dupla Funcao','Crie 1 e entre em outro desafio.','🔀','incomum','Especial',s=>s.challengesCreated>=1&&s.challengesParticipated>=2);
+      a('silent_winner','Silencioso','Venca 5 desafios sem enviar nenhum ataque.','🤫','raro','Especial',s=>s.wins>=5&&s.attacksSent===0);
+      a('social_warrior','Guerreiro Social','100 ataques enviados e recebidos.','🥊','lendario','Especial',s=>s.attacksSent>=100&&s.attacksReceived>=100);
+      a('dominante','Dominante','Mais vitorias que derrotas+empates (min 5 jogos).','👑','epico','Especial',s=>s.wins>(s.losses+s.draws)&&s.challengesParticipated>=5);
+      a('txn_win_combo','Eficiente','100 transacoes + 5 vitorias.','💡','raro','Especial',s=>s.totalTransactions>=100&&s.wins>=5);
+      a('big_combo','Maquina de Guerra','1000 transacoes + 100 vitorias.','⚙️','lendario','Especial',s=>s.totalTransactions>=1000&&s.wins>=100);
+      a('rich_winner','Rico e Vitorioso','R$10k saldo + 10 vitorias.','💰','epico','Especial',s=>s.totalBalance>=10000&&s.wins>=10);
+      a('ultra_combo','Lenda Absoluta','1000 tx + 50 vit + R$100k.','🌟','mitico','Lendario',s=>s.totalTransactions>=1000&&s.wins>=50&&s.totalBalance>=100000);
+      a('mythic_combo','Ser Mitico','5000 tx + 200 vit + R$1M.','🌌','mitico','Lendario',s=>s.totalTransactions>=5000&&s.wins>=200&&s.totalBalance>=1000000);
+      a('gods','Deus da Arena','10000 tx + 500 vitorias.','⚡','mitico','Lendario',s=>s.totalTransactions>=10000&&s.wins>=500);
+      a('lone_wolf','Lobo Solitario','Perca apos sequencia de 5+ vitorias.','🐺','raro','Especial',s=>s.losses>=1&&s.wins>=5);
+      a('diversified','Diversificado','5 entradas E 5 saidas registradas.','🔄','incomum','Especial',s=>s.totalEntradas>=5&&s.totalSaidas>=5);
+      a('mega_entry','Mega Entrada','Acumule R$50k em entradas totais.','🚀','epico','Especial',s=>s.totalEntradasValue>=50000);
+      a('challenge_5_5','5+5','5 desafios + 5 vitorias.','🎯','raro','Especial',s=>s.challengesParticipated>=5&&s.wins>=5);
+      a('challenge_10_10','10+10','10 desafios + 10 vitorias.','🏆','epico','Especial',s=>s.challengesParticipated>=10&&s.wins>=10);
+      a('challenge_25_25','25+25','25 desafios + 25 vitorias.','👑','lendario','Especial',s=>s.challengesParticipated>=25&&s.wins>=25);
+      a('challenge_50_50','50+50','50 desafios + 50 vitorias.','⚡','mitico','Especial',s=>s.challengesParticipated>=50&&s.wins>=50);
+      a('true_champ','Verdadeiro Campeao','50 vit + 0 derrotas + 500 tx.','🌟','mitico','Lendario',s=>s.wins>=50&&s.losses===0&&s.totalTransactions>=500);
+      a('transcendent','Transcendente','200 vit + 2000 tx + R$1M.','🌌','mitico','Lendario',s=>s.wins>=200&&s.totalTransactions>=2000&&s.totalBalance>=1000000);
+      a('balanced_fighter','Lutador Equilibrado','10 vit + 10 derrotas + 100 tx.','⚖️','raro','Especial',s=>s.wins>=10&&s.losses>=10&&s.totalTransactions>=100);
+      a('high_vol_winner','Produtivo','500 tx + 20 vitorias.','⚙️','epico','Especial',s=>s.totalTransactions>=500&&s.wins>=20);
+      a('zen_draws','Mestre do Equilibrio','10 empates no total.','☯️','epico','Especial',s=>s.draws>=10);
+      a('attack_master','Master das Zoeiras','50 ataques + 25 vitorias.','🎭','epico','Especial',s=>s.attacksSent>=50&&s.wins>=25);
+      a('full_commit','Compromisso Total','500 desafios participados.','🌍','mitico','Lendario',s=>s.challengesParticipated>=500);
+      a('first_tx','Comecando','Adicione a primeira transacao.','✨','comum','Especial',s=>s.totalTransactions>=1);
+      a('first_challenge','Primeiro Desafio','Entre no primeiro desafio.','🎮','comum','Especial',s=>s.challengesParticipated>=1);
+      a('comeback','De Volta','Venca 10 desafios apos ter perdido.','🔄','raro','Especial',s=>s.losses>=1&&s.wins>=10);
+      a('creator_winner','Rei da Casa','Venca como criador pela 1a vez.','🏰','comum','Especial',s=>s.winsAsP1>=1);
+      a('invader_winner','Invasor Vitorioso','Venca como invasor pela 1a vez.','🗡️','comum','Especial',s=>s.winsAsP2>=1);
+      a('prolific','Organizador Profissional','Crie 10 desafios.','📋','raro','Especial',s=>s.challengesCreated>=10);
+      // Combinacoes p1+p2 vitórias
+      [[5,5],[10,10],[15,15],[20,20],[25,25]].forEach(([p1,p2])=>a(`dual_${p1}`,`${p1}+${p1} (Criador/Invasor)`,`Venca ${p1} como criador E ${p2} como invasor.`,'🔀','lendario','Especialista',s=>s.winsAsP1>=p1&&s.winsAsP2>=p2));
+      // tx + ataques combos
+      [[50,10],[100,25],[500,50],[1000,100]].forEach(([tx,atk])=>a(`txatk_${tx}_${atk}`,`${tx} tx + ${atk} ataques`,`${tx} transacoes e ${atk} ataques enviados.`,'💥','epico','Especial',s=>s.totalTransactions>=tx&&s.attacksSent>=atk));
+      // Balance com wins
+      [[1000,5],[5000,10],[10000,20],[50000,50],[100000,100]].forEach(([bal,w])=>a(`balwin_${bal}`,`${balFmt(bal)} + ${w} vit`,`${balFmt(bal)} de saldo e ${w} vitorias.`,'💰',Rbal(bal),'Especial',s=>s.totalBalance>=bal&&s.wins>=w));
+      // Win rate + challenges
+      [[10,60],[20,70],[50,75],[100,80]].forEach(([ch,wr])=>a(`wrc_${ch}_${wr}`,`${ch} desafios + ${wr}% WR`,`${wr}% de WR em ${ch}+ desafios.`,'📊','epico','Especial',s=>s.challengesParticipated>=ch&&(s.wins/s.challengesParticipated*100)>=wr));
+
+      return list;
+    })();
+
+    // Mapeamento rápido por ID
+    const ACH_MAP = Object.fromEntries(ACHIEVEMENTS.map(a => [a.id, a]));
 
     const TAUNT_PRESETS = [
       { emoji: '🐥', text: 'Patinho detected!' },
@@ -1153,7 +1500,7 @@
       btn.textContent = label;
     }
 
-    function openHub(user, remember, fromAuto) {
+    async function openHub(user, remember, fromAuto) {
       currentPlayer = user;
       saveAuth(user, remember);
       currentChallenge = null;
@@ -1162,9 +1509,25 @@
       document.getElementById('login-view').classList.add('hidden');
       document.getElementById('arena-view').classList.add('hidden');
       document.getElementById('hub-view').classList.remove('hidden');
+      // Reset tab to arena on every login
+      switchHubTab('arena');
       renderHub();
       checkPendingTaunts();
       if (fromAuto) showToast('Login salvo ativo. Bem-vindo de volta.', '#059669');
+
+      // Show update modal first, then award achievements
+      showUpdateModal();
+      setTimeout(async () => {
+        const newAchs = await checkAndAwardNewAchievements(user);
+        if (newAchs.length > 0) {
+          // Sort: highest rarity first
+          const ro = ['mitico','lendario','epico','raro','incomum','comum'];
+          newAchs.sort((a, b) => ro.indexOf(a.rarity) - ro.indexOf(b.rarity));
+          // Delay so update modal can be seen first
+          const delay = localStorage.getItem(VERSION_SEEN_KEY) === APP_VERSION ? 400 : 2600;
+          setTimeout(() => showAchievementUnlockSequence(newAchs), delay);
+        }
+      }, 800);
     }
 
     async function handleSignup() {
@@ -1445,20 +1808,20 @@
       const rest = ranked.slice(3);
 
       el.innerHTML = ''
-        + '<div class="rank-champ">'
-        + '<div class="muted" style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">👑 Campeao em destaque</div>'
+        + '<div class="rank-champ clickable" onclick="openPlayerProfile(\'' + esc(champ.name).replace(/'/g,"\\'") + '\')">'
+        + '<div class="muted" style="font-size:10px; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px;">👑 Campeao em destaque · <span style="color:#a78bfa;">ver perfil</span></div>'
         + '<div style="font-size:1.25rem; font-weight:800; color:#f59e0b;">' + esc(champ.name) + '</div>'
         + '<div class="muted" style="font-size:12px; margin-top:2px;">' + champ.wins + ' vitorias | ' + formatSignedBRL(champ.balance, true) + '</div>'
         + '</div>'
         + '<div class="grid-3" style="margin-bottom:10px;">'
         + top3.map((p, i) => {
           const medal = i === 0 ? '🥇' : (i === 1 ? '🥈' : '🥉');
-          return '<div class="stat" style="text-align:left;"><div style="font-size:1.1rem;">' + medal + '</div><strong style="font-size:0.95rem;">' + esc(p.name) + '</strong><small class="muted">' + p.wins + ' vit.</small></div>';
+          return '<div class="stat clickable" style="text-align:left;cursor:pointer;" onclick="openPlayerProfile(\'' + esc(p.name).replace(/'/g,"\\'") + '\')"><div style="font-size:1.1rem;">' + medal + '</div><strong style="font-size:0.95rem;">' + esc(p.name) + '</strong><small class="muted">' + p.wins + ' vit.</small></div>';
         }).join('')
         + '</div>'
         + '<div style="display:grid; gap:6px;">'
         + rest.map((p, i) =>
-          '<div class="rank-item"><span style="font-size:13px;"><span class="muted" style="font-size:11px;">#' + (i + 4) + '</span> ' + esc(p.name) + '</span><span class="mono" style="font-size:12px; color:' + (p.balance >= 0 ? '#10b981' : '#f43f5e') + ';">' + formatSignedBRL(p.balance, true) + '</span></div>'
+          '<div class="rank-item clickable" onclick="openPlayerProfile(\'' + esc(p.name).replace(/'/g,"\\'") + '\')"><span style="font-size:13px;"><span class="muted" style="font-size:11px;">#' + (i + 4) + '</span> ' + esc(p.name) + '</span><span class="mono" style="font-size:12px; color:' + (p.balance >= 0 ? '#10b981' : '#f43f5e') + ';">' + formatSignedBRL(p.balance, true) + '</span></div>'
         ).join('')
         + '</div>';
     }
@@ -1485,7 +1848,7 @@
       }
 
       el.innerHTML = ranked.map((p, i) =>
-        '<div class="rank-item" style="margin-bottom:6px;">'
+        '<div class="rank-item clickable" style="margin-bottom:6px;" onclick="openPlayerProfile(\'' + esc(p.name).replace(/'/g,"\\'") + '\')">'
           + '<div><div style="font-size:13px; font-weight:800;">' + (i === 0 ? '🏅 ' : '<span class="muted" style="font-size:11px;">#' + (i + 1) + '</span> ') + esc(p.name) + '</div><div class="muted" style="font-size:11px;">' + p.wins + ' vitorias no mes</div></div>'
           + '<span class="mono" style="font-size:12px; color:' + (p.balance >= 0 ? '#10b981' : '#f43f5e') + ';">' + formatSignedBRL(p.balance, true) + '</span>'
         + '</div>'
@@ -1899,6 +2262,13 @@
       document.getElementById('txn-desc').value = '';
       showToast(type === 'entrada' ? 'Entrada registrada.' : 'Saida registrada.', type === 'entrada' ? '#059669' : '#be123c');
       renderArena();
+      checkAndAwardNewAchievements(currentPlayer).then(newAchs => {
+        if (newAchs.length > 0) {
+          const ro = ['mitico','lendario','epico','raro','incomum','comum'];
+          newAchs.sort((a, b) => ro.indexOf(a.rarity) - ro.indexOf(b.rarity));
+          setTimeout(() => showAchievementUnlockSequence(newAchs), 600);
+        }
+      });
     }
 
     async function finishChallenge() {
@@ -2167,6 +2537,360 @@
       }
       document.getElementById('taunt-modal').classList.remove('show');
       if (pendingTaunts.length > 0) setTimeout(showNextTaunt, 200);
+    }
+
+    /* ═══════════════════════════════════════
+       ACHIEVEMENT ENGINE
+       ═══════════════════════════════════════ */
+
+    async function computePlayerStats(username) {
+      const [{ data: challenges }, { data: players }, { data: txns }, { data: attacks }] = await Promise.all([
+        sb.from('challenges').select('*'),
+        sb.from('challenge_players').select('*'),
+        sb.from('transactions').select('*'),
+        sb.from('emoji_attacks').select('*')
+      ]);
+
+      const mine = (players || []).filter(p => p.username === username);
+      let wins = 0, losses = 0, draws = 0, winsAsP1 = 0, winsAsP2 = 0;
+      let totalTransactions = 0, totalEntradas = 0, totalSaidas = 0;
+      let totalEntradasValue = 0, totalSaidasValue = 0, totalBalance = 0;
+      let challengesParticipated = mine.length, challengesCreated = 0;
+      let maxWinStreak = 0, currentStreak = 0;
+      let hasHadNegativeBalance = false;
+
+      // Count created challenges
+      (challenges || []).forEach(c => { if (c.created_by === username) challengesCreated++; });
+
+      // Build sorted list of finished challenges for streak calculation
+      const finishedMine = [];
+      mine.forEach(mp => {
+        const ch = (challenges || []).find(c => c.id === mp.challenge_id);
+        if (!ch) return;
+        const cTxns = (txns || []).filter(t => t.challenge_id === ch.id && t.player_slot === mp.player_slot);
+        const bal = cTxns.reduce((s, t) => t.type === 'entrada' ? s + Number(t.amount||0) : s - Number(t.amount||0), 0);
+        if (bal < 0) hasHadNegativeBalance = true;
+        totalBalance += bal;
+        cTxns.forEach(t => {
+          totalTransactions++;
+          if (t.type === 'entrada') { totalEntradas++; totalEntradasValue += Number(t.amount||0); }
+          else { totalSaidas++; totalSaidasValue += Number(t.amount||0); }
+        });
+        if (ch.status === 'finished') {
+          const result = ch.winner === username ? 'win' : ch.winner ? 'loss' : 'draw';
+          const slot = mp.player_slot;
+          finishedMine.push({ result, slot, date: ch.updated_at || ch.created_at });
+          if (result === 'win') { wins++; if (slot === 'player1') winsAsP1++; else winsAsP2++; }
+          else if (result === 'loss') losses++;
+          else draws++;
+        }
+      });
+
+      // Calculate win streak (sort by date)
+      finishedMine.sort((a, b) => new Date(a.date) - new Date(b.date));
+      finishedMine.forEach(f => {
+        if (f.result === 'win') { currentStreak++; maxWinStreak = Math.max(maxWinStreak, currentStreak); }
+        else currentStreak = 0;
+      });
+
+      const attacksSent = (attacks || []).filter(a => a.from_user === username).length;
+      const attacksReceived = (attacks || []).filter(a => a.to_user === username).length;
+      const txnsWithDescription = (txns || []).filter(t => t.username === username && t.description && t.description.trim()).length;
+
+      return { wins, losses, draws, winsAsP1, winsAsP2, totalTransactions, totalEntradas, totalSaidas, totalEntradasValue, totalSaidasValue, totalBalance, challengesParticipated, challengesCreated, winStreak: maxWinStreak, attacksSent, attacksReceived, txnsWithDescription, hasHadNegativeBalance };
+    }
+
+    async function getUnlockedIds(username) {
+      const { data } = await sb.from('player_achievements').select('achievement_id, unlocked_at').eq('username', username);
+      return data || [];
+    }
+
+    async function checkAndAwardNewAchievements(username) {
+      const [stats, unlocked] = await Promise.all([computePlayerStats(username), getUnlockedIds(username)]);
+      const unlockedSet = new Set(unlocked.map(u => u.achievement_id));
+      const toUnlock = ACHIEVEMENTS.filter(ach => !unlockedSet.has(ach.id) && ach.condition(stats));
+      if (toUnlock.length === 0) return [];
+      const rows = toUnlock.map(ach => ({ username, achievement_id: ach.id }));
+      await sb.from('player_achievements').upsert(rows, { onConflict: 'username,achievement_id', ignoreDuplicates: true });
+      return toUnlock;
+    }
+
+    /* ═══════════════════════════════════════
+       UPDATE MODAL
+       ═══════════════════════════════════════ */
+
+    const UPDATE_INFO = {
+      version: APP_VERSION,
+      title: 'Arena Clash 2.0!',
+      desc: 'Uma atualizacao revolucionaria chegou! Sistema de conquistas, perfis de jogadores e conquistas retroativas — seus feitos anteriores ja contam!',
+      features: [
+        '🏆 Sistema de Conquistas com mais de 1.000 conquistas',
+        '👤 Perfis de jogadores — clique em qualquer nome no ranking',
+        '🎖️ Medalhas em destaque no perfil',
+        '🎉 Conquistas retroativas — seus feitos anteriores ja valem!',
+        '🔔 Celebracao especial ao desbloquear cada conquista',
+      ]
+    };
+
+    function showUpdateModal() {
+      const lastSeen = localStorage.getItem(VERSION_SEEN_KEY);
+      if (lastSeen === APP_VERSION) return;
+      document.getElementById('update-title').textContent = UPDATE_INFO.title;
+      document.getElementById('update-desc').textContent = UPDATE_INFO.desc;
+      document.getElementById('update-features').innerHTML = UPDATE_INFO.features.map(f =>
+        `<div class="update-feature"><span>${f}</span></div>`
+      ).join('');
+      document.getElementById('update-modal').classList.add('show');
+    }
+
+    function closeUpdateModal() {
+      localStorage.setItem(VERSION_SEEN_KEY, APP_VERSION);
+      document.getElementById('update-modal').classList.remove('show');
+    }
+
+    /* ═══════════════════════════════════════
+       ACHIEVEMENT UNLOCK SEQUENCE
+       ═══════════════════════════════════════ */
+
+    let _unlockQueue = [];
+    let _unlockCurrentIdx = 0;
+
+    function showAchievementUnlockSequence(achievements) {
+      if (!achievements || achievements.length === 0) return;
+      _unlockQueue = achievements;
+      _unlockCurrentIdx = 0;
+      showNextUnlock();
+    }
+
+    function showNextUnlock() {
+      if (_unlockCurrentIdx >= _unlockQueue.length) {
+        document.getElementById('ach-unlock-modal').classList.remove('show');
+        return;
+      }
+      const ach = _unlockQueue[_unlockCurrentIdx];
+      const remaining = _unlockQueue.length - _unlockCurrentIdx - 1;
+      const rarityColors = { comum:'#9ca3af',incomum:'#22c55e',raro:'#3b82f6',epico:'#a855f7',lendario:'#f59e0b',mitico:'#ef4444' };
+      const rarityLabels = { comum:'Comum',incomum:'Incomum',raro:'Raro',epico:'Epico',lendario:'Lendario',mitico:'Mitico' };
+      const color = rarityColors[ach.rarity] || '#9ca3af';
+      const box = document.getElementById('ach-unlock-box');
+      box.className = `unlock-box unlock-${ach.rarity}`;
+      box.innerHTML = `
+        <div class="unlock-inner">
+          <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:${color};margin-bottom:12px;">🔔 Conquista Desbloqueada!</div>
+          <div style="font-size:4rem;margin-bottom:10px;animation:pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275);">${ach.icon}</div>
+          <div class="rarity-label rarity-${ach.rarity}" style="margin-bottom:8px;">${rarityLabels[ach.rarity]}</div>
+          <h3 style="font-size:1.5rem;font-weight:800;margin-bottom:8px;">${esc(ach.name)}</h3>
+          <p class="muted" style="font-size:13px;margin-bottom:20px;line-height:1.6;">${esc(ach.desc)}</p>
+          <div style="font-size:11px;color:${color};font-weight:700;margin-bottom:14px;">Categoria: ${esc(ach.category)}</div>
+          ${remaining > 0
+            ? `<button class="btn btn-main" style="width:100%;padding:13px;" onclick="advanceUnlock()">Proxima (${remaining} restante${remaining>1?'s':''}) →</button>`
+            : `<button class="btn btn-main" style="width:100%;padding:13px;" onclick="advanceUnlock()">🎉 Incrivel!</button>`
+          }
+        </div>`;
+      spawnConfetti(box, ach.rarity);
+      document.getElementById('ach-unlock-modal').classList.add('show');
+    }
+
+    function advanceUnlock() {
+      _unlockCurrentIdx++;
+      if (_unlockCurrentIdx < _unlockQueue.length) {
+        showNextUnlock();
+      } else {
+        document.getElementById('ach-unlock-modal').classList.remove('show');
+        showToast('Todas as conquistas resgatadas! 🏆', '#7c3aed');
+      }
+    }
+
+    function spawnConfetti(container, rarity) {
+      const colors = { comum:['#9ca3af','#d1d5db'],incomum:['#22c55e','#86efac'],raro:['#3b82f6','#93c5fd'],epico:['#a855f7','#d8b4fe'],lendario:['#f59e0b','#fcd34d'],mitico:['#ef4444','#a855f7','#f59e0b'] };
+      const palette = colors[rarity] || colors.comum;
+      for (let i = 0; i < 18; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*60}%;width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;background:${palette[Math.floor(Math.random()*palette.length)]};animation-delay:${Math.random()*0.5}s;animation-duration:${1+Math.random()*0.8}s;border-radius:${Math.random()>0.5?'50%':'3px'};`;
+        container.appendChild(c);
+        setTimeout(() => c.remove(), 2000);
+      }
+    }
+
+    /* ═══════════════════════════════════════
+       HUB TABS
+       ═══════════════════════════════════════ */
+
+    let _achFilter = 'all';
+    let _achRarityFilter = 'all';
+    let _achSearchTerm = '';
+    let _cachedUnlockedIds = new Set();
+
+    function switchHubTab(tab) {
+      document.getElementById('hub-arena').classList.toggle('hidden', tab !== 'arena');
+      document.getElementById('hub-conquistas').classList.toggle('hidden', tab !== 'conquistas');
+      document.getElementById('tab-arena').classList.toggle('active', tab === 'arena');
+      document.getElementById('tab-conquistas').classList.toggle('active', tab === 'conquistas');
+      if (tab === 'conquistas') renderAchievementsTab();
+    }
+
+    async function renderAchievementsTab() {
+      const unlocked = await getUnlockedIds(currentPlayer);
+      _cachedUnlockedIds = new Set(unlocked.map(u => u.achievement_id));
+      const total = ACHIEVEMENTS.length;
+      const count = _cachedUnlockedIds.size;
+      const pct = total > 0 ? Math.round(count / total * 100) : 0;
+
+      document.getElementById('ach-summary-bar').innerHTML = `
+        <div class="ach-stat-badge"><strong style="font-size:1.3rem;color:#a78bfa;">${count}</strong><br><small class="muted">Desbloqueadas</small></div>
+        <div class="ach-stat-badge"><strong style="font-size:1.3rem;">${total}</strong><br><small class="muted">Total</small></div>
+        <div class="ach-stat-badge"><strong style="font-size:1.3rem;color:#f59e0b;">${pct}%</strong><br><small class="muted">Completo</small></div>
+        <div style="flex:1;min-width:120px;">
+          <div class="bar" style="height:6px;"><span style="width:${pct}%;background:linear-gradient(90deg,#7c3aed,#c026d3);"></span></div>
+          <div class="muted" style="font-size:11px;margin-top:4px;">${count} / ${total} conquistas</div>
+        </div>`;
+
+      const rarities = ['comum','incomum','raro','epico','lendario','mitico'];
+      const rarityEmojis = { comum:'⚪',incomum:'🟢',raro:'🔵',epico:'🟣',lendario:'🟡',mitico:'🔴' };
+      document.getElementById('ach-rarity-chips').innerHTML =
+        `<button class="ach-filter-chip${_achRarityFilter==='all'?' active':''}" id="rchip-all" onclick="setAchRarityFilter('all')">Todas raridades</button>` +
+        rarities.map(r => {
+          const cnt = ACHIEVEMENTS.filter(a => a.rarity === r && _cachedUnlockedIds.has(a.id)).length;
+          return `<button class="ach-filter-chip${_achRarityFilter===r?' active':''}" id="rchip-${r}" onclick="setAchRarityFilter('${r}')">${rarityEmojis[r]} ${r.charAt(0).toUpperCase()+r.slice(1)} (${cnt})</button>`;
+        }).join('');
+
+      renderAchievementsGrid();
+    }
+
+    function renderAchievementsGrid() {
+      const search = _achSearchTerm.toLowerCase();
+      let filtered = ACHIEVEMENTS.filter(ach => {
+        const unlocked = _cachedUnlockedIds.has(ach.id);
+        if (_achFilter === 'unlocked' && !unlocked) return false;
+        if (_achFilter === 'locked' && unlocked) return false;
+        if (_achRarityFilter !== 'all' && ach.rarity !== _achRarityFilter) return false;
+        if (search && !ach.name.toLowerCase().includes(search) && !ach.desc.toLowerCase().includes(search) && !ach.category.toLowerCase().includes(search)) return false;
+        return true;
+      });
+
+      // Unlocked first, then locked
+      filtered.sort((a, b) => {
+        const au = _cachedUnlockedIds.has(a.id) ? 0 : 1;
+        const bu = _cachedUnlockedIds.has(b.id) ? 0 : 1;
+        return au - bu;
+      });
+
+      const grid = document.getElementById('ach-grid');
+      const empty = document.getElementById('ach-empty');
+      if (filtered.length === 0) { grid.innerHTML = ''; empty.classList.remove('hidden'); return; }
+      empty.classList.add('hidden');
+
+      const rarityLabels = { comum:'Comum',incomum:'Incomum',raro:'Raro',epico:'Epico',lendario:'Lendario',mitico:'Mitico' };
+      grid.innerHTML = filtered.map(ach => {
+        const unlocked = _cachedUnlockedIds.has(ach.id);
+        return `<div class="ach-card rarity-${ach.rarity} ${unlocked?'unlocked':'locked'}">
+          <div class="ach-icon">${unlocked ? ach.icon : '🔒'}</div>
+          <div style="flex:1;min-width:0;">
+            <span class="rarity-label rarity-${ach.rarity}">${rarityLabels[ach.rarity]}</span>
+            <div style="font-weight:800;font-size:0.9rem;margin-bottom:3px;${unlocked?'':'filter:blur(0);'}">${esc(ach.name)}</div>
+            <div class="muted" style="font-size:11px;line-height:1.5;">${unlocked ? esc(ach.desc) : '???'}</div>
+            <div style="font-size:10px;margin-top:4px;color:var(--ink-muted);">${esc(ach.category)}</div>
+          </div>
+          ${unlocked ? '<div style="font-size:1rem;flex-shrink:0;">✅</div>' : ''}
+        </div>`;
+      }).join('');
+    }
+
+    function setAchFilter(f) {
+      _achFilter = f;
+      ['all','unlocked','locked'].forEach(id => document.getElementById(`chip-${id}`).classList.toggle('active', f === id));
+      renderAchievementsGrid();
+    }
+
+    function setAchRarityFilter(r) {
+      _achRarityFilter = r;
+      const rarities = ['all','comum','incomum','raro','epico','lendario','mitico'];
+      rarities.forEach(id => { const el = document.getElementById(`rchip-${id}`); if (el) el.classList.toggle('active', r === id); });
+      renderAchievementsGrid();
+    }
+
+    function filterAchievements() {
+      _achSearchTerm = document.getElementById('ach-search').value;
+      renderAchievementsGrid();
+    }
+
+    /* ═══════════════════════════════════════
+       PLAYER PROFILE MODAL
+       ═══════════════════════════════════════ */
+
+    async function openPlayerProfile(username) {
+      document.getElementById('profile-modal').classList.add('show');
+      document.getElementById('profile-username').textContent = username;
+      document.getElementById('profile-since').textContent = 'Carregando perfil...';
+      document.getElementById('profile-stats-area').innerHTML = '<p class="muted" style="text-align:center;padding:20px 0;">Carregando...</p>';
+      document.getElementById('profile-ach-area').innerHTML = '';
+      document.getElementById('profile-medals').innerHTML = '';
+
+      const [stats, unlockedRows] = await Promise.all([computePlayerStats(username), getUnlockedIds(username)]);
+      const unlockedSet = new Set(unlockedRows.map(u => u.achievement_id));
+      const unlockedAchs = ACHIEVEMENTS.filter(a => unlockedSet.has(a.id));
+
+      const totalChallenges = stats.challengesParticipated;
+      const winRate = totalChallenges > 0 ? Math.round(stats.wins / totalChallenges * 100) : 0;
+
+      // Rank badge
+      const rankLabel = stats.wins >= 100 ? '👑 Lenda' : stats.wins >= 50 ? '⚡ Mestre' : stats.wins >= 25 ? '🏆 Veterano' : stats.wins >= 10 ? '🥇 Experiente' : stats.wins >= 5 ? '🥈 Aspirante' : stats.wins >= 1 ? '🥉 Iniciante' : '🎮 Novato';
+      document.getElementById('profile-rank-badge').textContent = rankLabel;
+      document.getElementById('profile-since').textContent = `${unlockedAchs.length} conquistas desbloqueadas · ${stats.challengesParticipated} desafios`;
+
+      // Avatar based on rank
+      const avatarEmoji = stats.wins >= 50 ? '👑' : stats.wins >= 25 ? '🏆' : stats.wins >= 10 ? '⚔️' : stats.wins >= 1 ? '🎮' : '🌱';
+      document.getElementById('profile-avatar').textContent = avatarEmoji;
+
+      // Featured medals (top rarity unlocked)
+      const rarityOrder = ['mitico','lendario','epico','raro','incomum','comum'];
+      const featuredAchs = [...unlockedAchs].sort((a,b) => rarityOrder.indexOf(a.rarity) - rarityOrder.indexOf(b.rarity)).slice(0, 5);
+      const rarityColors2 = { comum:'rgba(156,163,175,0.15)',incomum:'rgba(34,197,94,0.15)',raro:'rgba(59,130,246,0.15)',epico:'rgba(168,85,247,0.15)',lendario:'rgba(245,158,11,0.15)',mitico:'rgba(239,68,68,0.15)' };
+      const rarityBorders = { comum:'rgba(156,163,175,0.4)',incomum:'rgba(34,197,94,0.4)',raro:'rgba(59,130,246,0.4)',epico:'rgba(168,85,247,0.4)',lendario:'rgba(245,158,11,0.4)',mitico:'rgba(239,68,68,0.5)' };
+      document.getElementById('profile-medals').innerHTML = featuredAchs.length > 0
+        ? featuredAchs.map(a => `<div class="medal-chip" title="${esc(a.desc)}" style="background:${rarityColors2[a.rarity]};border-color:${rarityBorders[a.rarity]};">${a.icon} ${esc(a.name)}</div>`).join('')
+        : '<span class="muted" style="font-size:12px;">Sem conquistas ainda.</span>';
+
+      // Stats grid
+      document.getElementById('profile-stats-area').innerHTML = `
+        <h4 class="section-title">📊 Estatisticas</h4>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;">
+          <div class="stat"><strong style="color:#10b981;">${stats.wins}</strong><small class="muted">Vitorias</small></div>
+          <div class="stat"><strong style="color:#f43f5e;">${stats.losses}</strong><small class="muted">Derrotas</small></div>
+          <div class="stat"><strong style="color:#f59e0b;">${stats.draws}</strong><small class="muted">Empates</small></div>
+          <div class="stat"><strong>${stats.challengesParticipated}</strong><small class="muted">Desafios</small></div>
+          <div class="stat"><strong style="color:#a78bfa;">${winRate}%</strong><small class="muted">Win Rate</small></div>
+          <div class="stat"><strong>${stats.winStreak}</strong><small class="muted">Melhor Streak</small></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px;">
+          <div class="stat"><strong class="mono" style="color:${stats.totalBalance>=0?'#10b981':'#f43f5e'};font-size:0.95rem;">${formatSignedBRL(stats.totalBalance,true)}</strong><small class="muted">Saldo Total</small></div>
+          <div class="stat"><strong class="mono" style="font-size:0.95rem;">${stats.totalTransactions}</strong><small class="muted">Transacoes</small></div>
+          <div class="stat"><strong>${stats.attacksSent}</strong><small class="muted">Ataques Enviados</small></div>
+          <div class="stat"><strong>${stats.attacksReceived}</strong><small class="muted">Ataques Recebidos</small></div>
+        </div>`;
+
+      // Achievements section in profile
+      const rarityOrder2 = ['mitico','lendario','epico','raro','incomum','comum'];
+      const topAchs = [...unlockedAchs].sort((a,b) => rarityOrder2.indexOf(a.rarity) - rarityOrder2.indexOf(b.rarity)).slice(0, 12);
+      document.getElementById('profile-ach-area').innerHTML = `
+        <h4 class="section-title">🏆 Conquistas (${unlockedAchs.length}/${ACHIEVEMENTS.length})</h4>
+        ${unlockedAchs.length === 0 ? '<p class="muted" style="font-size:13px;text-align:center;padding:16px 0;">Nenhuma conquista ainda — comece a jogar!</p>' : `
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;">
+          ${topAchs.map(a => `
+            <div class="ach-card rarity-${a.rarity} unlocked" style="padding:10px;">
+              <div class="ach-icon" style="width:36px;height:36px;font-size:1.1rem;">${a.icon}</div>
+              <div style="flex:1;min-width:0;">
+                <div style="font-weight:800;font-size:0.82rem;">${esc(a.name)}</div>
+                <span class="rarity-label rarity-${a.rarity}" style="font-size:8px;">${a.rarity}</span>
+              </div>
+            </div>`).join('')}
+        </div>
+        ${unlockedAchs.length > 12 ? `<p class="muted" style="font-size:12px;text-align:center;margin-top:8px;">+${unlockedAchs.length-12} conquistas no total</p>` : ''}`}`;
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profile-modal').classList.remove('show');
     }
 
     document.getElementById('login-pass').addEventListener('keydown', (e) => { if (e.key === 'Enter') handleLogin(); });
