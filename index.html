@@ -942,6 +942,11 @@
     /* Locked ach requirement hint */
     .ach-req { font-size:10px; margin-top:5px; padding:4px 8px; border-radius:8px; background:rgba(255,255,255,0.05); border:1px solid var(--line); display:inline-block; }
 
+    /* Achievement / medal progress bar (locked items) */
+    .ach-prog-bar { height:3px; border-radius:999px; background:rgba(255,255,255,0.07); margin-top:7px; overflow:hidden; }
+    .ach-prog-bar > span { display:block; height:100%; border-radius:999px; transition:width 0.6s ease; }
+    .ach-prog-label { display:flex; justify-content:space-between; font-size:9px; color:var(--ink-muted); margin-top:2px; }
+
     /* Profile edit modal */
     .pick-modal-box {
       width:min(96vw,680px); max-height:90vh; display:flex; flex-direction:column;
@@ -1451,7 +1456,7 @@
       a('rich_winner','Rico e Vitorioso','R$10k saldo + 10 vitorias.','💰','epico','Especial',s=>s.totalBalance>=10000&&s.wins>=10);
       a('ultra_combo','Lenda Absoluta','1000 tx + 50 vit + R$100k.','🌟','mitico','Lendario',s=>s.totalTransactions>=1000&&s.wins>=50&&s.totalBalance>=100000);
       a('mythic_combo','Ser Mitico','5000 tx + 200 vit + R$1M.','🌌','mitico','Lendario',s=>s.totalTransactions>=5000&&s.wins>=200&&s.totalBalance>=1000000);
-      a('gods','Deus da Arena','10000 tx + 500 vitorias.','⚡','mitico','Lendario',s=>s.totalTransactions>=10000&&s.wins>=500);
+      a('gods','Senhor da Arena','10000 tx + 500 vitorias.','⚡','mitico','Lendario',s=>s.totalTransactions>=10000&&s.wins>=500);
       a('lone_wolf','Lobo Solitario','Perca apos sequencia de 5+ vitorias.','🐺','raro','Especial',s=>s.losses>=1&&s.wins>=5);
       a('diversified','Diversificado','5 entradas E 5 saidas registradas.','🔄','incomum','Especial',s=>s.totalEntradas>=5&&s.totalSaidas>=5);
       a('mega_entry','Mega Entrada','Acumule R$50k em entradas totais.','🚀','epico','Especial',s=>s.totalEntradasValue>=50000);
@@ -1536,7 +1541,7 @@
       // ── LEGEND ──
       { id:'medal_500_wins',      name:'Quinhentas Vitorias', desc:'Venca 500 desafios. Voce e uma lenda.',                icon:'⚡', tier:'legend',  condition: s=>s.wins>=500 },
       { id:'medal_10m_balance',   name:'Dezenas de Milhoes',  desc:'Alcance R$10.000.000 de saldo.',                       icon:'🌌', tier:'legend',  condition: s=>s.totalBalance>=10000000 },
-      { id:'medal_deus_arena',    name:'Deus da Arena',       desc:'10.000 transacoes + 500 vitorias.',                    icon:'🔱', tier:'legend',  condition: s=>s.totalTransactions>=10000&&s.wins>=500 },
+      { id:'medal_deus_arena',    name:'Senhor da Arena',     desc:'10.000 transacoes + 500 vitorias.',                    icon:'🔱', tier:'legend',  condition: s=>s.totalTransactions>=10000&&s.wins>=500 },
     ];
 
     const MEDAL_MAP = Object.fromEntries(MEDALS.map(m => [m.id, m]));
@@ -1548,16 +1553,21 @@
     const XP_PER_RARITY = { comum:1, incomum:3, raro:8, epico:20, lendario:50, mitico:150 };
     const XP_PER_MEDAL_TIER = { bronze:5, silver:15, gold:40, platinum:100, diamond:250, legend:600 };
     const LEVELS = [
-      { name:'Novato',     icon:'🌱', min:0,    max:49,   color:'#9ca3af', bg:'rgba(156,163,175,0.15)', border:'rgba(156,163,175,0.4)' },
-      { name:'Aspirante',  icon:'🔰', min:50,   max:149,  color:'#22c55e', bg:'rgba(34,197,94,0.15)',   border:'rgba(34,197,94,0.5)' },
-      { name:'Guerreiro',  icon:'⚔️', min:150,  max:349,  color:'#3b82f6', bg:'rgba(59,130,246,0.15)',  border:'rgba(59,130,246,0.5)' },
-      { name:'Veterano',   icon:'🛡️', min:350,  max:699,  color:'#a855f7', bg:'rgba(168,85,247,0.15)',  border:'rgba(168,85,247,0.5)' },
-      { name:'Elite',      icon:'💎', min:700,  max:1199, color:'#06b6d4', bg:'rgba(6,182,212,0.15)',   border:'rgba(6,182,212,0.5)' },
-      { name:'Mestre',     icon:'🏆', min:1200, max:1999, color:'#f59e0b', bg:'rgba(245,158,11,0.15)',  border:'rgba(245,158,11,0.5)' },
-      { name:'Campeao',    icon:'👑', min:2000, max:2999, color:'#f59e0b', bg:'rgba(245,158,11,0.18)',  border:'rgba(245,158,11,0.6)' },
-      { name:'Lenda',      icon:'⚡', min:3000, max:4999, color:'#ef4444', bg:'rgba(239,68,68,0.15)',   border:'rgba(239,68,68,0.55)' },
-      { name:'Imortal',    icon:'🌟', min:5000, max:7999, color:'#ef4444', bg:'rgba(239,68,68,0.2)',    border:'rgba(239,68,68,0.65)' },
-      { name:'Deus',       icon:'🌌', min:8000, max:Infinity, color:'#a855f7', bg:'rgba(168,85,247,0.25)', border:'rgba(239,68,68,0.8)' },
+      { name:'Novato',       icon:'🌱', min:0,     max:99,    color:'#9ca3af', bg:'rgba(156,163,175,0.15)', border:'rgba(156,163,175,0.4)' },
+      { name:'Recruta',      icon:'🔰', min:100,   max:249,   color:'#22c55e', bg:'rgba(34,197,94,0.15)',   border:'rgba(34,197,94,0.5)' },
+      { name:'Combatente',   icon:'🗡️', min:250,   max:499,   color:'#4ade80', bg:'rgba(74,222,128,0.15)',  border:'rgba(74,222,128,0.5)' },
+      { name:'Guerreiro',    icon:'⚔️', min:500,   max:899,   color:'#3b82f6', bg:'rgba(59,130,246,0.15)',  border:'rgba(59,130,246,0.5)' },
+      { name:'Veterano',     icon:'🛡️', min:900,   max:1399,  color:'#06b6d4', bg:'rgba(6,182,212,0.15)',   border:'rgba(6,182,212,0.5)' },
+      { name:'Especialista', icon:'💫', min:1400,  max:2099,  color:'#a78bfa', bg:'rgba(167,139,250,0.15)', border:'rgba(167,139,250,0.5)' },
+      { name:'Elite',        icon:'💎', min:2100,  max:2999,  color:'#8b5cf6', bg:'rgba(139,92,246,0.18)',  border:'rgba(139,92,246,0.55)' },
+      { name:'Mestre',       icon:'🏆', min:3000,  max:4299,  color:'#f59e0b', bg:'rgba(245,158,11,0.15)',  border:'rgba(245,158,11,0.5)' },
+      { name:'Campeao',      icon:'👑', min:4300,  max:5999,  color:'#f97316', bg:'rgba(249,115,22,0.15)',  border:'rgba(249,115,22,0.55)' },
+      { name:'Lenda',        icon:'⚡', min:6000,  max:7999,  color:'#ef4444', bg:'rgba(239,68,68,0.15)',   border:'rgba(239,68,68,0.55)' },
+      { name:'Imortal',      icon:'🌟', min:8000,  max:10499, color:'#f43f5e', bg:'rgba(244,63,94,0.18)',   border:'rgba(244,63,94,0.65)' },
+      { name:'Titan',        icon:'🔥', min:10500, max:12999, color:'#dc2626', bg:'rgba(220,38,38,0.2)',    border:'rgba(220,38,38,0.7)' },
+      { name:'Absoluto',     icon:'☄️', min:13000, max:15499, color:'#c026d3', bg:'rgba(192,38,211,0.2)',   border:'rgba(192,38,211,0.7)' },
+      { name:'Supremo',      icon:'🌪️', min:15500, max:17999, color:'#7c3aed', bg:'rgba(124,58,237,0.22)',  border:'rgba(124,58,237,0.75)' },
+      { name:'Primordial',   icon:'🌌', min:18000, max:Infinity, color:'#a855f7', bg:'rgba(168,85,247,0.25)', border:'rgba(239,68,68,0.85)' },
     ];
 
     function computeXP(unlockedIds) {
@@ -1582,6 +1592,121 @@
     function levelBadgeHTML(xp) {
       const { level } = getLevelInfo(xp);
       return `<span class="level-badge" style="background:${level.bg};border-color:${level.border};color:${level.color};">${level.icon} ${level.name}</span>`;
+    }
+
+    /* ─── Progresso de conquistas bloqueadas ─── */
+    function getAchProgress(achId, stats) {
+      if (!stats) return null;
+      const prefixes = [
+        ['tx_',     s => s.totalTransactions],
+        ['tx2_',    s => s.totalTransactions],
+        ['win_',    s => s.wins],
+        ['loss_',   s => s.losses],
+        ['draw_',   s => s.draws],
+        ['draw2_',  s => s.draws],
+        ['part_',   s => s.challengesParticipated],
+        ['crt_',    s => s.challengesCreated],
+        ['crt2_',   s => s.challengesCreated],
+        ['atk_',    s => s.attacksSent],
+        ['recv_',   s => s.attacksReceived],
+        ['recv2_',  s => s.attacksReceived],
+        ['stk_',    s => s.winStreak],
+        ['stk2_',   s => s.winStreak],
+        ['ent_',    s => s.totalEntradas],
+        ['sai_',    s => s.totalSaidas],
+        ['entval_', s => s.totalEntradasValue],
+        ['saival_', s => s.totalSaidasValue],
+        ['p1w_',    s => s.winsAsP1],
+        ['p2w_',    s => s.winsAsP2],
+        ['p1w2_',   s => s.winsAsP1],
+        ['p2w2_',   s => s.winsAsP2],
+        ['bal_',    s => s.totalBalance],
+      ];
+      for (const [pfx, fn] of prefixes) {
+        if (achId.startsWith(pfx)) {
+          const n = parseFloat(achId.slice(pfx.length));
+          if (!isNaN(n) && n > 0) {
+            const cur = Math.max(0, fn(stats));
+            return { current: cur, target: n, pct: Math.min(100, Math.round(cur / n * 100)) };
+          }
+        }
+      }
+      if (/^wr2?_\d+$/.test(achId)) {
+        const p = parseFloat(achId.split('_').pop());
+        const minG = achId.startsWith('wr2_') ? 10 : 5;
+        const total = stats.challengesParticipated;
+        const wr = total > 0 ? (stats.wins / total * 100) : 0;
+        const note = total < minG ? ` (${total}/${minG} jogos)` : '';
+        return { current: Math.round(wr * 10) / 10, target: p, pct: Math.min(100, Math.round(wr / p * 100)), label: `${wr.toFixed(1)}%${note} / ${p}%` };
+      }
+      if (achId.startsWith('perf_')) {
+        const n = parseFloat(achId.slice(5));
+        if (!isNaN(n)) {
+          if (stats.losses > 0) return { current: 0, target: n, pct: 0, label: `Impossivel: ${stats.losses} derrota(s)` };
+          const cur = stats.wins + stats.draws;
+          return { current: cur, target: n, pct: Math.min(100, Math.round(cur / n * 100)) };
+        }
+      }
+      return null;
+    }
+
+    function getMedalProgress(medalId, stats) {
+      if (!stats) return null;
+      const map = {
+        medal_first_step:    s => ({ c: s.challengesParticipated, t: 1 }),
+        medal_first_win:     s => ({ c: s.wins, t: 1 }),
+        medal_first_tx:      s => ({ c: s.totalTransactions, t: 1 }),
+        medal_first_atk:     s => ({ c: s.attacksSent, t: 1 }),
+        medal_5_wins:        s => ({ c: s.wins, t: 5 }),
+        medal_10_tx:         s => ({ c: s.totalTransactions, t: 10 }),
+        medal_first_loss:    s => ({ c: s.losses, t: 1 }),
+        medal_creator:       s => ({ c: s.challengesCreated, t: 1 }),
+        medal_10_wins:       s => ({ c: s.wins, t: 10 }),
+        medal_streak_3:      s => ({ c: s.winStreak, t: 3 }),
+        medal_100_tx:        s => ({ c: s.totalTransactions, t: 100 }),
+        medal_1k_balance:    s => ({ c: s.totalBalance, t: 1000 }),
+        medal_25_challenges: s => ({ c: s.challengesParticipated, t: 25 }),
+        medal_20_atk:        s => ({ c: s.attacksSent, t: 20 }),
+        medal_25_wins:       s => ({ c: s.wins, t: 25 }),
+        medal_both_slots:    s => ({ c: Math.min(s.winsAsP1,1)+Math.min(s.winsAsP2,1), t: 2, label:`Criador:${s.winsAsP1>=1?'✅':'❌'} Invasor:${s.winsAsP2>=1?'✅':'❌'}` }),
+        medal_50_wins:       s => ({ c: s.wins, t: 50 }),
+        medal_streak_5:      s => ({ c: s.winStreak, t: 5 }),
+        medal_10k_balance:   s => ({ c: s.totalBalance, t: 10000 }),
+        medal_500_tx:        s => ({ c: s.totalTransactions, t: 500 }),
+        medal_100_challenges:s => ({ c: s.challengesParticipated, t: 100 }),
+        medal_100_atk:       s => ({ c: s.attacksSent, t: 100 }),
+        medal_invicto:       s => ({ c: s.losses===0 ? s.wins+s.draws : 0, t: 10, label: s.losses>0 ? `Impossivel: ${s.losses} derrota(s)` : undefined }),
+        medal_100_wins:      s => ({ c: s.wins, t: 100 }),
+        medal_streak_10:     s => ({ c: s.winStreak, t: 10 }),
+        medal_100k_balance:  s => ({ c: s.totalBalance, t: 100000 }),
+        medal_1k_tx:         s => ({ c: s.totalTransactions, t: 1000 }),
+        medal_winrate_80:    s => ({ c: s.challengesParticipated>=20 ? Math.min(s.wins/s.challengesParticipated*100,80) : s.challengesParticipated*2, t: 80, label: s.challengesParticipated>=20 ? `WR ${(s.wins/s.challengesParticipated*100).toFixed(1)}% / 80%` : `${s.challengesParticipated}/20 jogos` }),
+        medal_200_wins:      s => ({ c: s.wins, t: 200 }),
+        medal_1m_balance:    s => ({ c: s.totalBalance, t: 1000000 }),
+        medal_streak_20:     s => ({ c: s.winStreak, t: 20 }),
+        medal_5k_tx:         s => ({ c: s.totalTransactions, t: 5000 }),
+        medal_500_wins:      s => ({ c: s.wins, t: 500 }),
+        medal_10m_balance:   s => ({ c: s.totalBalance, t: 10000000 }),
+        medal_deus_arena:    s => ({ c: Math.min(s.totalTransactions,10000)+Math.min(s.wins,500), t: 10500, label:`TX: ${s.totalTransactions}/10000 · Vit: ${s.wins}/500` }),
+      };
+      const fn = map[medalId];
+      if (!fn) return null;
+      const { c, t, label } = fn(stats);
+      const pct = Math.min(100, Math.round(Math.max(0, c) / t * 100));
+      return { current: Math.max(0, c), target: t, pct, label };
+    }
+
+    function progBarHTML(pct, color, current, target, label) {
+      if (pct <= 0 && !label) return '';
+      const fmtN = n => {
+        if (typeof n !== 'number') return n;
+        if (n >= 1000000) return (n/1000000).toFixed(1).replace('.0','') + 'M';
+        if (n >= 1000) return (n/1000).toFixed(1).replace('.0','') + 'k';
+        return Math.floor(n).toLocaleString('pt-BR');
+      };
+      const leftText = label || `${fmtN(Math.min(current, target))} / ${fmtN(target)}`;
+      return `<div class="ach-prog-bar"><span style="width:${pct}%;background:${color};opacity:0.9;"></span></div>
+        <div class="ach-prog-label"><span>${leftText}</span><span>${pct}%</span></div>`;
     }
 
     // Chave localStorage para preferências de perfil
@@ -2939,6 +3064,7 @@
     let _achRarityFilter = 'all';
     let _achSearchTerm = '';
     let _cachedUnlockedIds = new Set();
+    let _cachedPlayerStats = null;
 
     function switchHubTab(tab) {
       document.getElementById('hub-arena').classList.toggle('hidden', tab !== 'arena');
@@ -2949,8 +3075,9 @@
     }
 
     async function renderAchievementsTab() {
-      const unlocked = await getUnlockedIds(currentPlayer);
+      const [unlocked, fetchedStats] = await Promise.all([getUnlockedIds(currentPlayer), computePlayerStats(currentPlayer)]);
       _cachedUnlockedIds = new Set(unlocked.map(u => u.achievement_id));
+      _cachedPlayerStats = fetchedStats;
       const unlockedIds = [..._cachedUnlockedIds];
 
       // XP and level
@@ -2995,12 +3122,18 @@
         <div class="medal-grid" style="margin-bottom:22px;">
           ${MEDALS.map(m => {
             const ul = _cachedUnlockedIds.has(m.id);
+            let mProgHTML = '';
+            if (!ul && _cachedPlayerStats) {
+              const mp = getMedalProgress(m.id, _cachedPlayerStats);
+              if (mp) mProgHTML = progBarHTML(mp.pct, tierColors2[m.tier] || '#a78bfa', mp.current, mp.target, mp.label || null);
+            }
             return `<div class="medal-card ${m.tier} ${ul?'':'locked'}">
               <div class="medal-icon">${ul ? m.icon : '🔒'}</div>
               <div style="flex:1;min-width:0;">
                 <span class="medal-tier-badge medal-tier-${m.tier}">${tierLabels2[m.tier]}</span>
-                <div style="font-weight:800;font-size:0.88rem;margin-bottom:3px;">${ul ? esc(m.name) : '???'}</div>
+                <div style="font-weight:800;font-size:0.88rem;margin-bottom:3px;">${ul ? esc(m.name) : esc(m.name)}</div>
                 <div class="muted" style="font-size:11px;line-height:1.5;">${esc(m.desc)}</div>
+                ${!ul ? mProgHTML : ''}
               </div>
               ${ul ? `<div style="font-size:1.1rem;">✅</div>` : ''}
             </div>`;
@@ -3053,15 +3186,21 @@
       empty.classList.add('hidden');
 
       const rarityLabels = { comum:'Comum',incomum:'Incomum',raro:'Raro',epico:'Epico',lendario:'Lendario',mitico:'Mitico' };
+      const rarityColors = { comum:'#9ca3af',incomum:'#22c55e',raro:'#3b82f6',epico:'#a855f7',lendario:'#f59e0b',mitico:'#ef4444' };
       grid.innerHTML = filtered.map(ach => {
         const unlocked = _cachedUnlockedIds.has(ach.id);
+        let progHTML = '';
+        if (!unlocked && _cachedPlayerStats) {
+          const p = getAchProgress(ach.id, _cachedPlayerStats);
+          if (p) progHTML = progBarHTML(p.pct, rarityColors[ach.rarity] || '#a78bfa', p.current, p.target, p.label || null);
+        }
         return `<div class="ach-card rarity-${ach.rarity} ${unlocked?'unlocked':'locked'}">
           <div class="ach-icon">${unlocked ? ach.icon : '🔒'}</div>
           <div style="flex:1;min-width:0;">
             <span class="rarity-label rarity-${ach.rarity}">${rarityLabels[ach.rarity]}</span>
             <div style="font-weight:800;font-size:0.9rem;margin-bottom:3px;">${unlocked ? esc(ach.name) : '<span style="opacity:0.5;">???</span>'}</div>
             <div class="muted" style="font-size:11px;line-height:1.5;">${esc(ach.desc)}</div>
-            ${!unlocked ? `<div class="ach-req">🎯 ${esc(ach.desc)}</div>` : ''}
+            ${!unlocked ? `<div class="ach-req">🎯 ${esc(ach.desc)}</div>${progHTML}` : ''}
             <div style="font-size:10px;margin-top:4px;color:var(--ink-muted);">${esc(ach.category)}</div>
           </div>
           ${unlocked ? '<div style="font-size:1rem;flex-shrink:0;">✅</div>' : ''}
